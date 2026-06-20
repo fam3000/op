@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>每日任務 PWA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#F7FAFC"/>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+  <style>
+    :root {
+      --color-bg: #F7FAFC;
+      --color-card: #fff;
+      --color-primary: #5C6BC0;
+      --color-accent: #81C784;
+      --color-accent-dark: #388E3C;
+      --color-danger: #E57373;
+      --color-muted: #B0BEC5;
+      --color-grey: #607D8B;
+      --radius: 16px;
+      --shadow: 0 8px 24px 0 rgba(44,62,80,0.06);
+      --font-size-base: 17px;
+      --space: 18px;
+      --space-xs: 8px;
+      --space-sm: 12px;
+      --transition: 0.18s cubic-bezier(.47,1.64,.41,.8);
+    }
+    html, body {height:100%;background:var(--color-bg);margin:0;padding:0;font-size:var(--font-size-base);}
+    body {
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+      align-items:center;
+      font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+      padding:0;
+      margin:0;
+      background:var(--color-bg);
+      color:var(--color-grey);
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
+      user-select:none;
+    }
+    .container {
+      width:100vw;
+      max-width:480px;
+      margin:auto;
+      padding:var(--space);
+      box-sizing:border-box;
+    }
+    header {
+      text-align:center;
+      margin-top:var(--space-xs);
+      margin-bottom:var(--space-xs);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:var(--space-sm);
+    }
+    h1 {
+      margin:0;
+      font-weight:700;
+      font-size:1.6em;
+      color:var(--color-primary);
+      letter-spacing:1px;
+      transition: color var(--transition);
+    }
+    .header-btn-small {
+      background:var(--color-muted);
+      border:none;
+      border-radius:10px;
+      padding:6px 12px;
+      color:#fff;
+      font-size:0.85em;
+      font-weight:500;
+      cursor:pointer;
+      transition:background var(--transition);
+    }
+    .header-btn-small:active {
+      background:var(--color-grey);
+    }
+    .tabs {
+      display:flex;
+      gap:var(--space-xs);
+      justify-content:space-between;
+      margin:var(--space-sm) 0 var(--space-xs) 0;
+    }
+    .tab-btn {
+      flex:1;
+      background:var(--color-card);
+      border-radius:var(--radius);
+      border:none;
+      box-shadow: var(--shadow);
+      font-size:1em;
+      padding:var(--space-xs) 0;
+      margin:0 2px;
+      color:var(--color-grey);
+      font-weight:600;
+      transition:all var(--transition);
+    }
+    .tab-btn.active,.tab-btn:focus {
+      background:var(--color-primary);
+      color:#fff;
+    }
+    .tasks-section {
+      margin:var(--space-xs) 0 var(--space-sm);
+    }
+    .tasks-list {
+      display:flex;
+      flex-direction:column;
+      gap:var(--space-xs);
+    }
+    .task-card {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:var(--color-card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:var(--space-sm);
+      min-height:44px;
+      font-size:1em;
+      cursor:pointer;
+      animation:fadeIn 0.5s;
+      transition:box-shadow var(--transition), transform var(--transition);
+    }
+    .task-card.done {
+      background:#ecf0f1;
+      color:var(--color-muted);
+      text-decoration:line-through;
+      opacity:.72;
+    }
+    .task-card:active {transform:scale(0.97);}
+    .task-check {
+      width:24px;height:24px;
+      display:flex; align-items:center; justify-content:center;
+      border-radius:50%;margin-right:12px;
+      border:2px solid var(--color-muted);
+      background:#EEF2F7;
+      cursor:pointer; transition:all var(--transition); flex-shrink:0;
+    }
+    .task-card.done .task-check {
+      background: var(--color-accent);
+      border-color: var(--color-accent-dark);
+    }
+    .task-check svg {
+      opacity: 0.8;
+      width: 18px; height: 18px;
+    }
+    .task-label {flex:1;}
+    .actions {
+      display:flex;
+      gap:var(--space-xs);
+      margin:var(--space-xs) 0;
+    }
+    .action-btn {
+      flex:1;
+      border:none;
+      border-radius:var(--radius);
+      font-size:1em;
+      font-weight:500;
+      padding:var(--space-xs) 0;
+      background:var(--color-primary);
+      color:#fff;
+      cursor:pointer;
+      box-shadow:var(--shadow);
+      transition:background var(--transition), color var(--transition);
+      outline:none;
+    }
+    .action-btn.danger {background:var(--color-danger);}
+    .action-btn.secondary {background:var(--color-muted);}
+    .hint { color:var(--color-muted); font-size:0.93em; margin:8px 0; letter-spacing:0.4px;}
+    .report-panel {
+      background:var(--color-card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      margin-bottom:var(--space-xs);
+      padding:var(--space-sm);
+      min-height:80px;
+      animation:fadeIn 0.5s;
+      display:none;
+    }
+    .report-panel.show {
+      display:block;
+    }
+    .report-title{font-weight:bold;margin-bottom:3px;}
+    .report-stat{color:var(--color-primary);margin-bottom:6px;}
+    .report-group ul{padding-left:1em;margin:0;}
+    .report-group li{margin-bottom:3px;}
+    .toast {
+      position:fixed;left:50%;bottom:38px;transform:translateX(-50%);
+      background:var(--color-grey);
+      color:#fff;
+      padding:10px 22px;
+      font-size:1.04em;
+      border-radius: 10px;
+      opacity:0;pointer-events:none;
+      z-index:9999;
+      transition:opacity var(--transition);
+    }
+    .toast.show {opacity:1;pointer-events:auto;}
+    .page-view {
+      display:none;
+    }
+    .page-view.active {
+      display:block;
+    }
+    .page-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:var(--space-sm);
+    }
+    .page-header h2 {
+      margin:0;
+      font-size:1.4em;
+      color:var(--color-primary);
+    }
+    .btn-small {
+      background:var(--color-muted);
+      border:none;
+      border-radius:10px;
+      padding:6px 12px;
+      color:#fff;
+      font-size:0.85em;
+      font-weight:500;
+      cursor:pointer;
+      transition:background var(--transition);
+    }
+    .btn-small:active {
+      background:var(--color-grey);
+    }
+    .btn-small.primary {
+      background:var(--color-primary);
+    }
+    .page-buttons {
+      display:flex;
+      gap:var(--space-xs);
+      margin:var(--space-xs) 0;
+    }
+    .page-buttons button {
+      flex:1;
+      border:none;
+      border-radius:var(--radius);
+      font-size:1em;
+      font-weight:500;
+      padding:var(--space-xs) 0;
+      background:var(--color-primary);
+      color:#fff;
+      cursor:pointer;
+      box-shadow:var(--shadow);
+      transition:background var(--transition);
+      outline:none;
+    }
+    .page-buttons button.secondary {
+      background:var(--color-muted);
+    }
+    @media (max-width:600px) {
+      .container{padding:10px;}
+    }
+    @keyframes fadeIn {
+      from{opacity:0;transform:translateY(10px);}
+      to{opacity:1;transform:translateY(0);}
+    }
+  </style>
+  <script>
+    if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js');}
+  </script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>📅 每日任務</h1>
+    <button class="header-btn-small" id="btn-switch-page">報表</button>
+  </header>
+
+  <!-- 頁面一：每日任務 -->
+  <div class="page-view active" id="page-tasks">
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-main" type="button">主要任務</button>
+      <button class="tab-btn" id="tab-sub" type="button">次要任務</button>
+    </div>
+    <section class="tasks-section" id="main-section">
+      <div class="tasks-list" id="tasks-main-list"></div>
+    </section>
+    <section class="tasks-section" id="sub-section" style="display:none;">
+      <div class="tasks-list" id="tasks-sub-list"></div>
+    </section>
+    <div class="page-buttons">
+      <button id="btn-reset">🔄 重置</button>
+    </div>
+    <div class="hint">輕觸任務完成／取消・支援離線・自動儲存</div>
+  </div>
+
+  <!-- 頁面二：報表 -->
+  <div class="page-view" id="page-report">
+    <div class="page-header">
+      <h2>📊 產生報表</h2>
+      <button class="btn-small primary" id="btn-gen-report">產生</button>
+    </div>
+    <div class="report-panel" id="report-panel">
+      <div class="report-title">每日任務報表</div>
+      <div class="report-stat" id="report-stat"></div>
+      <div class="report-group" id="report-content"></div>
+      <button class="btn-small" id="btn-copy-report" style="width:100%;margin-top:var(--space-sm);">📋 複製報表</button>
+    </div>
+    <div class="hint">報表會在此顯示・支援離線・自動儲存任務狀態</div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+</div>
+
+<script>
+  // 配置
+  const STORAGE_KEY = "daily_tasks_v5";
+  const mainTasks = [
+      "轉盤","哥特體：①基礎筆畫②英文大小寫③數字","素寫筆畫9","羅馬數字",
+      "注音符號","九排線","控筆線條1-5天+進階","運動13招+拳擊","每日一張設計稿","刺青技巧",
+      "復盤","刺青客源","虛擬商品","規劃"
+  ];
+  const subTasks = [
+    "語言","聲音","女生","穿著","覺察","口腔","拍片","表情","體態","腦袋記憶默寫"
+  ];
+
+  // 狀態
+  let state = {};
+  let currentPage = "tasks"; // "tasks" 或 "report"
+
+  // 讀寫 localStorage
+  function loadState() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+    }catch(e){return {};}
+  }
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+  function resetState() {
+    if(confirm("確認重置所有任務進度？")) {
+      state = {};
+      saveState();
+      renderTasks();
+      showToast("🔄 已重置狀態");
+    }
+  }
+
+  // 渲染
+  function renderTasks(){
+    ["main","sub"].forEach(cat=>{
+      const tasks = cat==="main" ? mainTasks : subTasks;
+      const listEl = document.getElementById(`tasks-${cat}-list`);
+      listEl.innerHTML = "";
+      tasks.forEach((task,i)=>{
+        const id = `${cat}-${i}`;
+        const done = state[id];
+        const card = document.createElement("div");
+        card.className = "task-card" + (done ? " done" : "");
+        card.tabIndex=0;
+        // 勾選動畫
+        const check = document.createElement("div");
+        check.className = "task-check";
+        check.innerHTML = done
+          ? `<svg viewBox="0 0 20 20"><path fill="none" stroke="#fff" stroke-width="3" d="M4 11l5 5 7-9"/></svg>`
+          : `<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" stroke="#5C6BC0" stroke-width="2" fill="none"/></svg>`;
+        card.appendChild(check);
+        // 標籤
+        const span = document.createElement("span");
+        span.className = "task-label";
+        span.textContent = task;
+        card.appendChild(span);
+        // 點擊切換完成狀態
+        card.addEventListener("click",()=>{
+          state[id] = !state[id];
+          saveState(); renderTasks();
+          showToast(state[id] ? "✅ 已完成" : "❌ 取消完成");
+        });
+        listEl.appendChild(card);
+      });
+    });
+  }
+  function reportStat(){
+    let doneC=0, totalC=mainTasks.length+subTasks.length;
+    Object.keys(state).forEach(k=>{if(state[k])doneC++;});
+    return `已完成 ${doneC} / 全部 ${totalC}（主 ${mainTasks.filter((_,i)=>state["main-"+i]).length}，次 ${subTasks.filter((_,i)=>state["sub-"+i]).length}）`;
+  }
+  function generateReport(){
+    const panel = document.getElementById("report-panel"), 
+      stat = document.getElementById("report-stat"),
+      content = document.getElementById("report-content");
+    stat.textContent = reportStat();
+    let markup = "";
+    function block(cat, tasks){
+      const done = tasks.filter((_,i)=>state[cat+"-"+i]);
+      const undone = tasks.filter((_,i)=>!state[cat+"-"+i]);
+      return `
+      <div><b>${cat==="main"?"主要任務":"次要任務"}：</b></div>
+      <ul>
+        <li>✅ 完成：${done.length ? done.join("、") : "（無）"}</li>
+        <li>❌ 未完成：${undone.length ? undone.join("、") : "（無）"}</li>
+      </ul>`;
+    }
+    markup += block("main",mainTasks);
+    markup += block("sub",subTasks);
+    content.innerHTML = markup;
+    panel.classList.add("show");
+    showToast("📊 報表已生成");
+  }
+  function copyReport(){
+    const stat = reportStat();
+    const done_main = mainTasks.filter((_,i)=>state["main-"+i]);
+    const undone_main = mainTasks.filter((_,i)=>!state["main-"+i]);
+    const done_sub = subTasks.filter((_,i)=>state["sub-"+i]);
+    const undone_sub = subTasks.filter((_,i)=>!state["sub-"+i]);
+    let text = `每日任務報表\n${stat}\n\n主要任務：\n✅ 完成：${done_main.length ? done_main.join("、") : "（無）"}\n❌ 未完成：${undone_main.length ? undone_main.join("、") : "（無）"}\n\n次要任務：\n✅ 完成：${done_sub.length ? done_sub.join("、") : "（無）"}\n❌ 未完成：${undone_sub.length ? undone_sub.join("、") : "（無）"}`;
+    navigator.clipboard.writeText(text).then(()=>{
+      showToast("📋 已複製報表");
+    }).catch(()=>{
+      showToast("⚠️ 複製失敗");
+    });
+  }
+  function showToast(msg,ms=1400){
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    clearTimeout(t.dataset.t?parseInt(t.dataset.t):0);
+    t.dataset.t = setTimeout(()=>t.classList.remove("show"), ms);
+  }
+
+  // 頁面切換
+  function switchPage(page) {
+    currentPage = page;
+    document.querySelectorAll(".page-view").forEach(p=>p.classList.remove("active"));
+    if(page==="tasks") {
+      document.getElementById("page-tasks").classList.add("active");
+      document.getElementById("btn-switch-page").textContent = "報表";
+    } else {
+      document.getElementById("page-report").classList.add("active");
+      document.getElementById("btn-switch-page").textContent = "任務";
+    }
+  }
+
+  // tabs
+  document.getElementById("tab-main").onclick = function(){
+    this.classList.add("active");
+    document.getElementById("tab-sub").classList.remove("active");
+    document.getElementById("main-section").style.display='';
+    document.getElementById("sub-section").style.display='none';
+  }
+  document.getElementById("tab-sub").onclick = function(){
+    this.classList.add("active");
+    document.getElementById("tab-main").classList.remove("active");
+    document.getElementById("main-section").style.display='none';
+    document.getElementById("sub-section").style.display='';
+  }
+  document.getElementById("btn-switch-page").onclick = ()=>{
+    switchPage(currentPage==="tasks"?"report":"tasks");
+  };
+  document.getElementById("btn-reset").onclick = resetState;
+  document.getElementById("btn-gen-report").onclick = generateReport;
+  document.getElementById("btn-copy-report").onclick = copyReport;
+
+  // 初始化
+  state = loadState();
+  renderTasks();
+</script>
+</body>
+</html>
