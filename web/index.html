@@ -1,3 +1,5 @@
+外部連結的模板
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -317,22 +319,18 @@
 
       <div class="tab-scroll-wrap">
         <div class="tab-bar" id="tabBar">
-        <button class="tab-btn active" type="button" data-src="tlk.html" data-name="tlk">tlk</button>
-      
+        <!-- TLK按鈕直接放外部連結 -->
+        <button class="tab-btn active" type="button" data-src="https://tlk.io/pcb" data-name="TLK">TLK</button>
         <button class="tab-btn " type="button" data-src="飛書.html" data-name="飛書">飛書</button>
-      
         <button class="tab-btn " type="button" data-src="測試.html" data-name="測試">測試</button>
       </div>
       </div>
-
-      
-      
     </header>
 
     <main class="main-area">
       <div class="iframe-wrap">
         <div class="loading-tip" id="loadingTip">載入中...</div>
-        <iframe id="toolFrame" class="tool-frame" title="工具內容" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-downloads" src="tlk.html"></iframe>
+        <iframe id="toolFrame" class="tool-frame" title="工具內容" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-downloads" src="飛書.html"></iframe>
       </div>
     </main>
   </div>
@@ -379,18 +377,16 @@
     </div>
   </div>
 
-  <script>
+<script>
     const APP_CONFIG = {
       logoText: '模板',
       appTitle: '模板',
       homeTitle: '模板',
       iconFile: 'template-icon.png',
       tools: [
-        { name: '模板1', src: 'template1.html' },
-        { name: '模板2', src: 'template2.html' },
-        { name: '模板3', src: 'template3.html' },
-        { name: '模板4', src: 'template4.html' },
-        { name: '模板5', src: 'template5.html' }
+        { name: 'TLK', src: 'https://tlk.io/pcb' },
+        { name: '飛書', src: '飛書.html' },
+        { name: '測試', src: '測試.html' }
       ]
     };
 
@@ -505,9 +501,9 @@
         >${tool.name}</button>
       `).join('');
 
-      if (tools.length > 0) {
-        loadTool(tools[0].src);
-      }
+      // 只載入第一個本地html，外部網址不預載iframe
+      const firstLocal = tools.find(item => !/^https?:\/\//.test(item.src));
+      if (firstLocal) loadTool(firstLocal.src);
     }
 
     function setActiveButton(src) {
@@ -520,8 +516,17 @@
       loadingTip.classList.toggle('show', show);
     }
 
+    // 重寫核心判斷函式：偵測外部網址開新分頁
     function loadTool(src) {
       if (!src || src === currentSrc) return;
+
+      // 判斷 https 外部連結
+      if (/^https?:\/\//.test(src)) {
+        window.open(src, '_blank');
+        return;
+      }
+
+      // 本地html走iframe
       currentSrc = src;
       showLoading(true);
       toolFrame.src = src;
@@ -597,6 +602,6 @@
     document.querySelector('link[rel="apple-touch-icon"]').setAttribute('href', APP_CONFIG.iconFile);
 
     renderTabs();
-  </script>
+</script>
 
 </body>
