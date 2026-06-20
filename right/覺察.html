@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>覺察之鏡</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft JhengHei',sans-serif;
+  background:linear-gradient(135deg,#f0f4ff 0%,#e8f0fe 100%);
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  color:#333;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+.container{
+  width: 100%;
+  height: 100vh;
+  background:rgba(255,255,255,.98);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+.header{
+  padding: 24px 20px 16px;
+  text-align: center;
+  border-bottom: 1px solid #f0f4ff;
+}
+h1{
+  font-size: 26px;
+  margin-bottom: 8px;
+  background:linear-gradient(135deg,#5b7bdf 0%,#805ad5 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  letter-spacing: 0.5px;
+}
+.subtitle{
+  color:#6b7280;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.tabs{
+  display: flex;
+  padding: 0 20px;
+  border-bottom: 1px solid #f0f4ff;
+}
+.tab{
+  flex: 1;
+  text-align: center;
+  padding: 14px 0;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 15px;
+  color: #9ca3af;
+  transition: all .2s ease;
+  position: relative;
+}
+.tab.active{
+  color: #5b7bdf;
+  font-weight: 600;
+}
+.tab.active::after{
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 15%;
+  width: 70%;
+  height: 2px;
+  background:linear-gradient(90deg,#5b7bdf 0%,#805ad5 100%);
+  border-radius: 2px;
+}
+
+.tab-content{
+  display: none;
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+.tab-content.active{
+  display: block;
+}
+.tab-content::-webkit-scrollbar{
+  width: 4px;
+}
+.tab-content::-webkit-scrollbar-thumb{
+  background: #e2e8f0;
+  border-radius: 2px;
+}
+
+.list-container{
+  padding: 0;
+}
+.item{
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);
+  border-left: 4px solid #5b7bdf;
+  box-shadow: 0 4px 12px rgba(91,123,223,0.06);
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.item:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(91,123,223,0.08);
+}
+.item:active{
+  transform: scale(0.99);
+  box-shadow: 0 2px 8px rgba(91,123,223,0.06);
+}
+.badge{
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background:linear-gradient(135deg,#e0e7ff 0%,#ddd6fe 100%);
+  color: #5b7bdf;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  margin-right: 14px;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.5);
+}
+.meta{
+  flex: 1;
+}
+.name{
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.desc{
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.9;
+}
+
+.actions{
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid #f0f4ff;
+}
+.btn-danger{
+  flex: 1;
+  padding: 14px;
+  border: none;
+  background:linear-gradient(135deg,#f472b6 0%,#ec4899 100%);
+  color: #fff;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s ease;
+  box-shadow: 0 4px 12px rgba(236,72,153,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn-danger:hover{
+  box-shadow: 0 6px 16px rgba(236,72,153,0.2);
+}
+.btn-danger:active{
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(236,72,153,0.12);
+}
+
+.notice{
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  padding: 12px 20px;
+  background:linear-gradient(135deg,#10b981 0%,#059669 100%);
+  color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(16,185,129,0.2);
+  z-index: 1000;
+  opacity: 0;
+  transition: all .3s cubic-bezier(0.4,0,0.2,1);
+  font-size: 14px;
+  font-weight: 500;
+}
+.notice.show{
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.notice.error{
+  background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);
+  box-shadow: 0 6px 16px rgba(239,68,68,0.2);
+}
+
+.btn-text{
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  background:linear-gradient(135deg,#5b7bdf 0%,#805ad5 100%);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(91,123,223,0.15);
+  transition: all .15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn-text:hover{
+  box-shadow: 0 6px 16px rgba(91,123,223,0.2);
+}
+.btn-text:active{
+  transform: scale(0.96);
+  box-shadow: 0 2px 8px rgba(91,123,223,0.12);
+}
+
+.statistics-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0 16px;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+.total-count{
+  padding: 12px 18px;
+  background:linear-gradient(135deg,#5b7bdf 0%,#805ad5 100%);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(91,123,223,0.15);
+  white-space: nowrap;
+}
+
+.report-table{
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+.report-table th, .report-table td{
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #f0f4ff;
+}
+.report-table th{
+  background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+}
+.report-table td{
+  color: #1f2937;
+  font-size: 14px;
+}
+.report-table tr:last-child td{
+  border-bottom: none;
+}
+.report-table tr:hover td{
+  background-color: #f9fafb;
+}
+.report-table td:first-child{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.report-table td:last-child{
+  color: #5b7bdf;
+  font-weight: 600;
+}
+</style>
+
+<!-- 引入manifest.json -->
+<link rel="manifest" href="/314green/manifest.json">
+
+<!-- 适配iOS设备 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="覺察之鏡">
+<link rel="apple-touch-icon" href="/314green/icon.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<!-- 注册Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/314green/sw.js').catch(err => {
+        console.log('Service Worker 注册失败:', err);
+      });
+    });
+  }
+</script>
+</head>
+<body>
+<div id="notice" class="notice"></div>
+
+<div class="container">
+  <div class="header">
+    <h1>🧘 覺察之鏡</h1>
+    <div class="subtitle">追蹤每一個覺察時刻，覺察即自由</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(0)">📌 計數器</button>
+    <button class="tab" onclick="switchTab(1)">📊 統計</button>
+  </div>
+
+  <div id="tab0" class="tab-content active">
+    <div class="list-container" id="itemsList"></div>
+    <div class="actions">
+      <button class="btn-danger" onclick="clearAll()">🗑 清空全部</button>
+    </div>
+  </div>
+
+  <div id="tab1" class="tab-content">
+    <div class="statistics-header">
+      <button class="btn-text" onclick="exportData()">📥 導出數據</button>
+      <div id="totalCount" class="total-count">總觸發次數：0</div>
+    </div>
+    <div id="reportContainer"></div>
+  </div>
+</div>
+
+<script>
+/* 觀察項目 */
+const ITEMS = [
+  { id:1, name:'逃避', emoji:'🚶', desc:'不知道要做什麼就整理環境' },
+  { id:2, name:'清明', emoji:'🚪', desc:'不解釋，不說明，不需要我處理，就放掉' },
+  { id:3, name:'專注', emoji:'🧊', desc:'執行力=不要給大腦留時間，用肉體控制精神，直接開幹' },
+  { id:4, name:'站穩', emoji:'🔄', desc:'自己會教人的壞習慣' },
+  { id:5, name:'失焦', emoji:'👀', desc:'你到底知不知道此刻你該幹嘛？' },
+  { id:6, name:'劇本', emoji:'🎬', desc:'被自己的腦中劇本牽著走' },
+  { id:7, name:'關卡', emoji:'⚔️', desc:'宇宙陰謀，用魚，用影，用慢，阻止你前行' },
+  { id:8, name:'層次', emoji:'📊', desc:'大眾思維，高手思維，做什麼，怎麽做，為什麼' },
+  { id:9, name:'流動', emoji:'👻', desc:'把人生當遊戲來玩，練等' },
+  { id:10, name:'空轉', emoji:'⏳', desc:'虛度' },
+  { id:11, name:'馴化', emoji:'🐴', desc:'注意力=被馴化' },
+  { id:12, name:'拖延', emoji:'⏸', desc:'明天再執行的陷阱' }
+];
+
+/* 使用 localStorage 儲存資料 */
+let appData = null;
+
+const $ = s => document.querySelector(s);
+function todayStr(){ return new Date().toISOString().split('T')[0]; }
+function showNotice(t, isError=false){
+  const n=$("#notice");
+  n.textContent=t;
+  n.classList.toggle('error', isError);
+  n.classList.add('show');
+  setTimeout(()=>n.classList.remove('show'),2000);
+}
+
+/* 初始化資料，如果 localStorage 有則使用 */
+function initData(){
+  const raw = localStorage.getItem('appData');
+  if(raw){
+    try{
+      appData = JSON.parse(raw);
+      return appData;
+    }catch(e){
+      // 解析失敗則使用預設值
+    }
+  }
+  appData = {
+    items: ITEMS.map(x=>({ 
+      id:x.id, 
+      name:x.name, 
+      emoji:x.emoji, 
+      desc:x.desc, 
+      count:0, 
+      lastUpdate:null 
+    })),
+    lastReset: todayStr()
+  };
+  localStorage.setItem('appData', JSON.stringify(appData));
+  return appData;
+}
+
+/* 取得資料 */
+function getData(){ 
+  return appData || initData();
+}
+
+/* 設定並存入 localStorage */
+function setData(d){ 
+  appData = d;
+  localStorage.setItem('appData', JSON.stringify(d));
+}
+
+/* 渲染列表 */
+function render(){
+  const d=getData(); 
+  const wrap=$("#itemsList");
+  wrap.innerHTML = d.items.map(it=>`
+    <div class="item" onclick="addCount(${it.id})">
+      <div class="badge">${it.count}</div>
+      <div class="meta">
+        <div class="name">${it.emoji} ${it.name}</div>
+        <div class="desc">${it.desc}</div>
+      </div>
+    </div>
+  `).join('');
+  
+  // 更新第二頁的總次數
+  const total = d.items.reduce((s, i) => s + i.count, 0);
+  $("#totalCount").textContent = `總觸發次數：${total}`;
+}
+
+/* 增加計數 */
+function addCount(id){
+  const d=getData(); 
+  const it=d.items.find(i=>i.id===id); 
+  if(!it) return;
+  it.count++; 
+  it.lastUpdate=new Date().toISOString(); 
+  setData(d); 
+  render(); 
+  showNotice(`✨ ${it.name} +1`);
+}
+
+/* 生成報表 */
+function generateReport(){
+  const d=getData(); 
+  const sorted=[...d.items].sort((a,b)=>b.count-a.count);
+  let html='<table class="report-table"><thead><tr><th>覺察詞彙</th><th>次數</th></tr></thead><tbody>';
+  sorted.forEach(i=> html+=`<tr><td>${i.emoji} ${i.name}</td><td>${i.count}</td></tr>`);
+  html+='</tbody></table>';
+  $("#reportContainer").innerHTML=html;
+  showNotice('📊 統計已生成');
+}
+
+/* 導出數據 */
+function exportData(){
+  const d=getData(); 
+  const lines=d.items.map(i=>`${i.name}: ${i.count}次`).join('\n');
+  const text=`覺察詞彙計數\n日期: ${new Date().toLocaleString()}\n\n${lines}\n\n總次數: ${d.items.reduce((s,i)=>s+i.count,0)}`;
+  navigator.clipboard.writeText(text).then(()=>showNotice('✅ 已複製到剪貼簿')).catch(()=>showNotice('❌ 複製失敗', true));
+}
+
+/* 清空全部 */
+function clearAll(){
+  if(!confirm('⚠️ 確定要清空全部資料嗎？此操作無法撤銷！')) return;
+  try{
+    appData = {
+      items: ITEMS.map(x=>({ 
+        id:x.id, 
+        name:x.name, 
+        emoji:x.emoji, 
+        desc:x.desc, 
+        count:0, 
+        lastUpdate:null 
+      })),
+      lastReset: todayStr()
+    };
+    setData(appData);
+    render();
+    $("#reportContainer").innerHTML='';
+    showNotice('✅ 全部紀錄已清空');
+  }catch(e){
+    showNotice('❌ 清除失敗，請再試一次', true);
+  }
+}
+
+/* 切換分頁 */
+function switchTab(i){
+  document.querySelectorAll('.tab').forEach((t,idx)=>t.classList.toggle('active',idx===i));
+  document.querySelectorAll('.tab-content').forEach((c,idx)=>c.classList.toggle('active',idx===i));
+  if(i===1) generateReport();
+}
+
+/* 初始化應用 */
+initData(); 
+render();
+</script>
+</body>
+</html>
+
+manifest.json
+{
+  "name": "覺察之鏡",
+  "short_name": "覺察鏡",
+  "start_url": "/314green/",
+  "display": "standalone",
+  "theme_color": "#667eea",
+  "background_color": "#f5f7fa",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
+
+
+sw.js
+const cacheName = 'my-pwa-cache';
+const filesToCache = [
+  '/314green/',
+  '/314green/index.html',
+  '/314green/manifest.json',
+  '/314green/icon.png'
+];
+
+self.addEventListener('install', function(e) {
+  e.waitUntil(
+    caches.open(cacheName).then(function(cache) {
+      return cache.addAll(filesToCache);
+    })
+  );
+});
+
+self.addEventListener('fetch', function(e) {
+  e.respondWith(
+    caches.match(e.request).then(function(response) {
+      return response || fetch(e.request);
+    })
+  );
+});
