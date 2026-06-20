@@ -2,16 +2,24 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TLK聊天室</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden}
+html,body{width:100%;height:100%;overflow:hidden;background:#fff}
+#tip{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  color:#666;font-size:14px;text-align:center;
+}
 iframe{width:100%;height:100%;border:none;display:block}
 </style>
 </head>
 <body>
-<!-- 載入外部TLK網址 -->
-<iframe src="https://tlk.io/pcb" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"></iframe>
+<!-- 因為 tlk.io 禁止iframe，載入會空白，顯示提示 -->
+<div id="tip">
+  無法嵌入TLK.io<br>
+  <a href="https://tlk.io/pcb" target="_blank">點此新分頁開啟</a>
+</div>
+<iframe src="https://tlk.io/pcb" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"></iframe>
 </body>
 </html>
