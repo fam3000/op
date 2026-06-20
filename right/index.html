@@ -1,10 +1,605 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
 <head>
-<meta charset="UTF-8">
-<title>靜態網站測試</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#495057">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Right Now">
+  <link rel="icon" type="image/png" sizes="192x192" href="time-icon.png">
+  <link rel="apple-touch-icon" href="time-icon.png">
+  <title>Right Now</title>
+
+  <style>
+    :root {
+      --color-main: #495057;
+      --color-gray: #adb5bd;
+      --color-light: #e9ecef;
+      --color-bg: #f5f5f5;
+      --color-white: #ffffff;
+      --color-border: #d9dee3;
+      --color-shadow: rgba(0, 0, 0, 0.08);
+      --radius: 8px;
+      --gap: 8px;
+      --btn-h: 36px;
+      --header-h: 52px;
+      --trans: 0.2s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background: var(--color-bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
+      color: var(--color-main);
+      font-size: 14px;
+    }
+
+    .app-shell {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .app-header {
+      height: var(--header-h);
+      display: flex;
+      align-items: center;
+      gap: var(--gap);
+      padding: 0 var(--gap);
+      background: var(--color-white);
+      border-bottom: 1px solid var(--color-light);
+      flex-shrink: 0;
+      box-shadow: 0 1px 4px var(--color-shadow);
+      z-index: 10;
+    }
+
+    .app-logo {
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--color-main);
+      flex-shrink: 0;
+      animation: bounce 1s infinite alternate;
+      user-select: none;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 6px;
+    }
+
+    .app-logo:active {
+      transform: scale(0.98);
+    }
+
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-4px); }
+    }
+
+    .tab-scroll-wrap {
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .tab-scroll-wrap::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-bar {
+      min-width: max-content;
+      display: flex;
+      align-items: center;
+      gap: var(--gap);
+      height: 100%;
+      padding: 0 4px;
+    }
+
+    .tab-btn {
+      height: var(--btn-h);
+      min-width: 88px;
+      padding: 0 14px;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--color-light);
+      color: var(--color-main);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all var(--trans);
+      flex-shrink: 0;
+    }
+
+    .tab-btn:active {
+      transform: scale(0.98);
+    }
+
+    .tab-btn.active {
+      background: var(--color-gray);
+      color: var(--color-white);
+    }
+
+    .setting-btn, .copy-btn {
+      height: var(--btn-h);
+      min-width: 54px;
+      padding: 0 10px;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--color-light);
+      color: var(--color-main);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--trans);
+      flex-shrink: 0;
+    }
+
+    .setting-btn:active, .copy-btn:active {
+      transform: scale(0.98);
+    }
+
+    .main-area {
+      flex: 1;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      background: var(--color-bg);
+    }
+
+    .iframe-wrap {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: var(--color-white);
+    }
+
+    .tool-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: var(--color-white);
+      display: block;
+    }
+
+    .loading-tip {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 5;
+      background: rgba(73, 80, 87, 0.88);
+      color: #fff;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px);
+      transition: all 0.22s ease;
+    }
+
+    .loading-tip.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .modal-mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 99;
+      padding: 16px;
+    }
+
+    .modal-mask.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(720px, 100%);
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+      overflow: hidden;
+    }
+
+    .modal-head {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--color-light);
+      font-weight: 700;
+      color: var(--color-main);
+    }
+
+    .modal-body {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .field-label {
+      font-size: 13px;
+      color: #6c757d;
+      margin-bottom: 6px;
+    }
+
+    .modal-body input,
+    .modal-body textarea {
+      width: 100%;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--color-main);
+      outline: none;
+      background: #fff;
+    }
+
+    .modal-body input:focus,
+    .modal-body textarea:focus {
+      border-color: var(--color-gray);
+    }
+
+    .modal-body textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #6c757d;
+      line-height: 1.5;
+    }
+
+    .modal-foot {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      padding: 14px 16px;
+      border-top: 1px solid var(--color-light);
+    }
+
+    .modal-foot button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .btn-primary {
+      background: var(--color-main);
+      color: #fff;
+    }
+
+    .btn-ghost {
+      background: var(--color-light);
+      color: var(--color-main);
+    }
+
+    @media (max-width: 640px) {
+      .app-logo {
+        font-size: 1.35rem;
+      }
+
+      .tab-btn {
+        min-width: 82px;
+        padding: 0 12px;
+        font-size: 12px;
+      }
+
+      .setting-btn, .copy-btn {
+        min-width: 48px;
+      }
+    }
+  </style>
 </head>
 <body>
-<h1>GitHub Pages 部署成功</h1>
+  <div class="app-shell">
+    <header class="app-header">
+      <div id="appLogo" class="app-logo">TIME</div>
+
+      <div class="tab-scroll-wrap">
+        <div class="tab-bar" id="tabBar">
+        <button class="tab-btn active" type="button" data-src="打卡.html" data-name="打卡">打卡</button>
+      
+        <button class="tab-btn " type="button" data-src="提醒.html" data-name="提醒">提醒</button>
+      
+        <button class="tab-btn " type="button" data-src="任務.html" data-name="任務">任務</button>
+      
+        <button class="tab-btn " type="button" data-src="覺察.html" data-name="覺察">覺察</button>
+      </div>
+      </div>
+
+      
+      
+    </header>
+
+    <main class="main-area">
+      <div class="iframe-wrap">
+        <div class="loading-tip" id="loadingTip">載入中...</div>
+        <iframe id="toolFrame" class="tool-frame" title="工具內容" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-downloads" src="打卡.html"></iframe>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-mask" id="modalMask">
+    <div class="modal">
+      <div class="modal-head">模板設定</div>
+      <div class="modal-body">
+        <div>
+          <div class="field-label">左上角跳動文字</div>
+          <input id="logoInput" type="text" value="模板">
+        </div>
+
+        <div>
+          <div class="field-label">網頁標題 / 主畫面名稱</div>
+          <input id="titleInput" type="text" value="模板">
+        </div>
+
+        <div>
+          <div class="field-label">icon 檔名</div>
+          <input id="iconInput" type="text" value="template-icon.png">
+        </div>
+
+        <div>
+          <div class="field-label">批量按鈕清單</div>
+          <textarea id="tabsInput" placeholder="模板1
+模板2
+模板3
+模板4
+模板5">模板1
+模板2
+模板3
+模板4
+模板5</textarea>
+          <div class="hint">
+            每行一個，或用逗號分隔。按鈕名稱會自動轉成對應檔名。
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-ghost" id="cancelBtn" type="button">取消</button>
+        <button class="btn-primary" id="applyBtn" type="button">套用</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const APP_CONFIG = {
+      logoText: '模板',
+      appTitle: '模板',
+      homeTitle: '模板',
+      iconFile: 'template-icon.png',
+      tools: [
+        { name: '模板1', src: 'template1.html' },
+        { name: '模板2', src: 'template2.html' },
+        { name: '模板3', src: 'template3.html' },
+        { name: '模板4', src: 'template4.html' },
+        { name: '模板5', src: 'template5.html' }
+      ]
+    };
+
+    const tabBar = document.getElementById('tabBar');
+    const toolFrame = document.getElementById('toolFrame');
+    const loadingTip = document.getElementById('loadingTip');
+    const appLogo = document.getElementById('appLogo');
+    const modalMask = document.getElementById('modalMask');
+    const openSettingsBtn = document.getElementById('openSettingsBtn');
+    const copyHtmlBtn = document.getElementById('copyHtmlBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const applyBtn = document.getElementById('applyBtn');
+    const logoInput = document.getElementById('logoInput');
+    const titleInput = document.getElementById('titleInput');
+    const iconInput = document.getElementById('iconInput');
+    const tabsInput = document.getElementById('tabsInput');
+
+    let tools = [...APP_CONFIG.tools];
+    let currentSrc = '';
+
+    function slugify(name) {
+      return name.trim().toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w\u4e00-\u9fff-]/g, '');
+    }
+
+    function parseNames(text) {
+      return text
+        .split(/[\n,，]+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+
+    function buildToolsFromNames(names) {
+      const seen = new Map();
+      return names.map((name, index) => {
+        const base = slugify(name) || `tool-${index + 1}`;
+        const count = seen.get(base) || 0;
+        seen.set(base, count + 1);
+        const safe = count === 0 ? base : `${base}-${count + 1}`;
+        return { name, src: `${safe}.html` };
+      });
+    }
+
+    function copyText(text) {
+      return new Promise((resolve) => {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => resolve(true)).catch(() => {
+              const ta = document.createElement('textarea');
+              ta.value = text;
+              ta.style.position = 'fixed';
+              ta.style.opacity = '0';
+              document.body.appendChild(ta);
+              ta.focus();
+              ta.select();
+              const ok = document.execCommand('copy');
+              document.body.removeChild(ta);
+              resolve(ok);
+            });
+          } else {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            const ok = document.execCommand('copy');
+            document.body.removeChild(ta);
+            resolve(ok);
+          }
+        } catch (err) {
+          resolve(false);
+        }
+      });
+    }
+
+    function getCleanHtml() {
+      const clone = document.documentElement.cloneNode(true);
+
+      clone.querySelector('.setting-btn')?.remove();
+      clone.querySelector('.copy-btn')?.remove();
+      clone.querySelector('#openSettingsBtn')?.remove();
+      clone.querySelector('#copyHtmlBtn')?.remove();
+
+      return clone.innerHTML;
+    }
+
+    function updateMetaAndTitle() {
+      const logoText = logoInput.value.trim() || APP_CONFIG.logoText;
+      const pageTitle = titleInput.value.trim() || logoText;
+      const iconFile = iconInput.value.trim() || APP_CONFIG.iconFile;
+
+      document.title = pageTitle;
+      document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', pageTitle);
+
+      let favicon = document.querySelector('link[rel="icon"]');
+      if (favicon) favicon.setAttribute('href', iconFile);
+
+      let appleTouch = document.querySelector('link[rel="apple-touch-icon"]');
+      if (appleTouch) appleTouch.setAttribute('href', iconFile);
+    }
+
+    function renderTabs() {
+      tabBar.innerHTML = tools.map((tool, index) => `
+        <button
+          class="tab-btn ${index === 0 ? 'active' : ''}"
+          type="button"
+          data-src="${tool.src}"
+          data-name="${tool.name}"
+        >${tool.name}</button>
+      `).join('');
+
+      if (tools.length > 0) {
+        loadTool(tools[0].src);
+      }
+    }
+
+    function setActiveButton(src) {
+      tabBar.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.src === src);
+      });
+    }
+
+    function showLoading(show = true) {
+      loadingTip.classList.toggle('show', show);
+    }
+
+    function loadTool(src) {
+      if (!src || src === currentSrc) return;
+      currentSrc = src;
+      showLoading(true);
+      toolFrame.src = src;
+      setActiveButton(src);
+    }
+
+    tabBar.addEventListener('click', (e) => {
+      const btn = e.target.closest('.tab-btn');
+      if (!btn) return;
+      loadTool(btn.dataset.src);
+    });
+
+    toolFrame.addEventListener('load', () => {
+      showLoading(false);
+    });
+
+    appLogo.addEventListener('click', () => {
+      openSettingsBtn.click();
+    });
+
+    openSettingsBtn.addEventListener('click', () => {
+      logoInput.value = appLogo.textContent.trim() || APP_CONFIG.logoText;
+      titleInput.value = document.title || APP_CONFIG.appTitle;
+      iconInput.value = document.querySelector('link[rel="icon"]')?.getAttribute('href') || APP_CONFIG.iconFile;
+      tabsInput.value = tools.map(t => t.name).join('\n');
+      modalMask.classList.add('show');
+    });
+
+    copyHtmlBtn.addEventListener('click', async () => {
+      updateMetaAndTitle();
+
+      const cleanHtml = getCleanHtml();
+      const ok = await copyText(cleanHtml);
+
+      copyHtmlBtn.textContent = ok ? '已複製' : '失敗';
+      setTimeout(() => copyHtmlBtn.textContent = '複製', 1200);
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      modalMask.classList.remove('show');
+    });
+
+    modalMask.addEventListener('click', (e) => {
+      if (e.target === modalMask) modalMask.classList.remove('show');
+    });
+
+    applyBtn.addEventListener('click', () => {
+      const logoText = logoInput.value.trim();
+      const pageTitle = titleInput.value.trim();
+      const iconFile = iconInput.value.trim();
+      const names = parseNames(tabsInput.value);
+
+      if (logoText) appLogo.textContent = logoText;
+      if (pageTitle) document.title = pageTitle;
+      if (iconFile) {
+        document.querySelector('link[rel="icon"]').setAttribute('href', iconFile);
+        document.querySelector('link[rel="apple-touch-icon"]').setAttribute('href', iconFile);
+      }
+
+      if (names.length) {
+        tools = buildToolsFromNames(names);
+        renderTabs();
+      }
+
+      updateMetaAndTitle();
+      modalMask.classList.remove('show');
+    });
+
+    appLogo.textContent = APP_CONFIG.logoText;
+    document.title = APP_CONFIG.appTitle;
+    document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', APP_CONFIG.homeTitle);
+    document.querySelector('link[rel="icon"]').setAttribute('href', APP_CONFIG.iconFile);
+    document.querySelector('link[rel="apple-touch-icon"]').setAttribute('href', APP_CONFIG.iconFile);
+
+    renderTabs();
+  </script>
+
+
 </body>
-</html>
