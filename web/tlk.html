@@ -1,29 +1,17 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TLK pcb</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-        #tlkio {
-            width: 100%;
-            height: 100%;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TLK聊天室</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden}
+iframe{width:100%;height:100%;border:none;display:block}
+</style>
 </head>
 <body>
-    <!-- 對應你的頻道 pcb -->
-    <div id="tlkio" data-channel="pcb"></div>
-    <script async src="https://tlk.io/embed.js"></script>
+<!-- 載入外部TLK網址 -->
+<iframe src="https://tlk.io/pcb" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"></iframe>
 </body>
 </html>
