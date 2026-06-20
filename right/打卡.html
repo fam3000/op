@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="風格指南">
+  <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAANlBMVEUaGhozMzNmZmb19fX////MzMx2dnZGRkYAAADl5eW2traZmZmIiIhVVVUgICCpqanCwsK8vLwvvMW8AAABQUlEQVR42u3Y2w6CMBCF4aGcRBFf/2kF5CLGGGfXLcT/u21ykZ+wbTIAAAAAAAAAAAAAAAAAAAAAAPi/6JrumUyHm+6ePd12D6fsJtu9Zw+0Db7ZY22DN9lLtvvIHmgbfLJH2gaf7Lk+b0+1DT7ZY22Db7KXbPeRPdA2+GTPtQ0+2Utt95490Db4ZI+1DT7ZS7b7yB5oG3yyZ/o8vMse6PP2VNvgkz3WNvhkL9nuI3ugbfDJnmsb/NP2Wm+32e4je6Bt8Mmeaxt8spdstw2+yR5rG3yyl2z3kT3QNvhkz7UNPtlLtvvIHmgbfLLn2gaf7CXbbYNP9ljb4JO9ZLuP7IG2wSd7rm3wyV6y3Uf2QNvgkz3XNvhkL9luG3yyR9oGn+wl231kD7QNPtlzbYNP9pLtPrIH2gaf7Lm2wSd7yXYf2QMAAAAAAAAAAADgT/oCGTgJQCOIpSMAAAAASUVORK5CYII=">
+  <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5Yya6Z2S5YyXIiwic2hvcnRfbmFtZSI6IuWMl+W3qiIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZmZmZmZmIn0=">
+  <title>刺青風格完整指南 - 刺青工作室</title>
+  
+  <style>
+    :root {
+      --color-cream-50: rgba(252, 252, 249, 1);
+      --color-cream-100: rgba(255, 255, 253, 1);
+      --color-slate-500: rgba(98, 108, 113, 1);
+      --color-brown-600: rgba(94, 82, 64, 1);
+      --color-charcoal-700: rgba(31, 33, 33, 1);
+      --color-charcoal-800: rgba(38, 40, 40, 1);
+      --color-slate-900: rgba(19, 52, 59, 1);
+      --color-teal-500: rgba(33, 128, 141, 1);
+
+      --color-brown-600-rgb: 94, 82, 64;
+      --color-background: var(--color-cream-50);
+      --color-surface: var(--color-cream-100);
+      --color-text: var(--color-slate-900);
+      --color-text-secondary: var(--color-slate-500);
+      --color-primary: var(--color-teal-500);
+      --color-border: rgba(var(--color-brown-600-rgb), 0.2);
+      --color-card-border: rgba(var(--color-brown-600-rgb), 0.12);
+
+      --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans TC', sans-serif;
+      --font-size-sm: 12px;
+      --font-size-base: 14px;
+      --font-size-md: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 20px;
+      --font-size-2xl: 24px;
+      --font-size-3xl: 32px;
+      --font-size-4xl: 40px;
+      --font-weight-normal: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+      --line-height-tight: 1.2;
+      --line-height-normal: 1.5;
+      --line-height-relaxed: 1.75;
+
+      --space-4: 4px;
+      --space-8: 8px;
+      --space-12: 12px;
+      --space-16: 16px;
+      --space-20: 20px;
+      --space-24: 24px;
+      --space-32: 32px;
+      --space-40: 40px;
+      --space-48: 48px;
+      --space-64: 64px;
+      --space-80: 80px;
+      --space-96: 96px;
+
+      --radius-sm: 6px;
+      --radius-base: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-background: var(--color-charcoal-700);
+        --color-surface: var(--color-charcoal-800);
+        --color-text: #e5e5e5;
+        --color-text-secondary: rgba(167, 169, 169, 0.7);
+      }
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: var(--font-family-base); color: var(--color-text); background-color: var(--color-background); overflow-x: hidden; }
+
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--color-card-border);
+      transition: all 0.3s ease;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .nav {
+        background: rgba(31, 33, 33, 0.95);
+      }
+    }
+
+    .nav__container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-16) var(--space-24);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav__brand {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .nav__back {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: var(--font-weight-medium);
+      transition: all 0.3s ease;
+    }
+
+    .nav__back:hover {
+      opacity: 0.8;
+    }
+
+    .article {
+      padding: var(--space-96) var(--space-24) var(--space-64);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .article__header {
+      text-align: center;
+      margin-bottom: var(--space-64);
+    }
+
+    .article__date {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-16);
+    }
+
+    .article__title {
+      font-size: var(--font-size-4xl);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--space-16);
+      line-height: var(--line-height-tight);
+    }
+
+    .article__excerpt {
+      font-size: var(--font-size-lg);
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-relaxed);
+    }
+
+    .article__content {
+      background: var(--color-surface);
+      border: 1px solid var(--color-card-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-48);
+      line-height: var(--line-height-relaxed);
+    }
+
+    .article__content h2 {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      margin: var(--space-32) 0 var(--space-16);
+      color: var(--color-text);
+    }
+
+    .article__content h3 {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      margin: var(--space-24) 0 var(--space-12);
+      color: var(--color-text);
+    }
+
+    .article__content p {
+      margin-bottom: var(--space-16);
+      color: var(--color-text);
+      font-size: var(--font-size-base);
+    }
+
+    .article__content ul, .article__content ol {
+      margin: var(--space-16) 0 var(--space-16) var(--space-32);
+      color: var(--color-text);
+    }
+
+    .article__content li {
+      margin-bottom: var(--space-12);
+      font-size: var(--font-size-base);
+    }
+
+    .article__content .highlight {
+      background: rgba(33, 128, 141, 0.1);
+      border-left: 4px solid var(--color-primary);
+      padding: var(--space-16);
+      margin: var(--space-24) 0;
+      border-radius: var(--radius-base);
+      color: var(--color-text);
+    }
+
+    .style-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-24);
+      margin: var(--space-24) 0;
+    }
+
+    .style-card {
+      background: var(--color-background);
+      border: 1px solid var(--color-card-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-24);
+      transition: all 0.3s ease;
+    }
+
+    .style-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .style-card h3 {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: var(--space-12);
+      color: var(--color-text);
+    }
+
+    .style-card p {
+      font-size: var(--font-size-base);
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-relaxed);
+    }
+
+    .article__nav {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-24);
+      margin-top: var(--space-64);
+    }
+
+    .article__nav-link {
+      flex: 1;
+      padding: var(--space-24);
+      background: var(--color-surface);
+      border: 1px solid var(--color-card-border);
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      color: var(--color-text);
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .article__nav-link:hover {
+      transform: translateY(-4px);
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .article__nav-title {
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: var(--space-8);
+      font-size: var(--font-size-base);
+    }
+
+    .article__nav-label {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    @media (max-width: 768px) {
+      .article {
+        padding: var(--space-64) var(--space-16) var(--space-48);
+      }
+
+      .article__title {
+        font-size: var(--font-size-3xl);
+      }
+
+      .article__content {
+        padding: var(--space-24);
+      }
+
+      .article__nav {
+        flex-direction: column;
+      }
+
+      .style-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav__container">
+      <a href="index.html" class="nav__brand">刺青工作室</a>
+      <a href="index.html" class="nav__back">← 返回首頁</a>
+    </div>
+  </nav>
+
+  <article class="article">
+    <div class="article__header">
+      <div class="article__date">📅 2025年11月8日 | 📖 閱讀時間約 6 分鐘</div>
+      <h1 class="article__title">   刺青風格完整指南</h1>
+      <p class="article__excerpt">從傳統到現代，探索各種刺青風格的特色與適合的設計主題，找到最符合您個性的風格</p>
+    </div>
+
+    <div class="article__content">
+      <h2>刺青的多種風格</h2>
+      <p>刺青藝術有許多不同的風格，每種風格都有其獨特的特徵和美學。了解這些風格將幫助您選擇最符合您個性的設計。</p>
+
+      <div class="style-grid">
+        <div class="style-card">
+          <h3>🔴 傳統風格（Traditional）</h3>
+          <p>特色：粗黑線條、飽和色彩、簡潔有力。源自西方水手刺青文化。適合希望有復古感且經典的人。</p>
+        </div>
+        <div class="style-card">
+          <h3>📍 寫實風格（Realism）</h3>
+          <p>特色：高度寫實、細節豐富、光影逼真。通常是黑灰色，可以刺青人物、動物或景物。</p>
+        </div>
+        <div class="style-card">
+          <h3>🎨 水彩風格（Watercolor）</h3>
+          <p>特色：流暢的色彩過渡、模糊邊界、藝術感強。看起來像水彩畫在皮膚上。</p>
+        </div>
+        <div class="style-card">
+          <h3>⬜ 幾何風格（Geometric）</h3>
+          <p>特色：幾何圖形、對稱、精確的線條。現代感十足，適合追求簡約風格的人。</p>
+        </div>
+        <div class="style-card">
+          <h3>🎯 點刺風格（Dotwork）</h3>
+          <p>特色：由數千個小點組成、漸層效果、耐看。需要經驗豐富的刺青師。</p>
+        </div>
+        <div class="style-card">
+          <h3>🏛️ 新傳統風格（Neo-Traditional）</h3>
+          <p>特色：介於傳統和現代之間、線條更細、色彩更多樣。保留傳統感但更現代。</p>
+        </div>
+      </div>
+
+      <h2>如何選擇適合的風格？</h2>
+      <p>選擇刺青風格時，考慮以下因素：</p>
+      <ul>
+        <li><strong>個人風格：</strong>您喜歡復古還是現代？簡潔還是複雜？</li>
+        <li><strong>皮膚狀況：</strong>不同風格對皮膚的適應性不同</li>
+        <li><strong>刺青位置：</strong>某些風格在特定部位效果更好</li>
+        <li><strong>長期保養：</strong>有些風格比其他風格更容易褪色</li>
+        <li><strong>預算：</strong>複雜的風格通常需要更高的費用</li>
+      </ul>
+
+      <h2>不同風格的持久性</h2>
+      <p>並非所有風格都能保持相同的清晰度。水彩和點刺風格在多年後可能需要補色，而傳統和幾何風格通常更耐久。</p>
+
+      <h2>與刺青師的溝通</h2>
+      <p>選擇您喜歡的風格後，與您的刺青師詳細溝通。帶上參考圖片，討論可行性、預計時間和預算。經驗豐富的刺青師可以根據您的需求推薦最佳方案。</p>
+
+      <div class="highlight">
+        <strong>💡 提示：</strong>在做決定前收集3-5張相似風格的參考圖片，讓刺青師更好地理解您的需求。
+      </div>
+    </div>
+
+    <div class="article__nav">
+      <a href="article1.html" class="article__nav-link">
+        <div class="article__nav-label">← 上一篇</div>
+        <div class="article__nav-title">刺青前必知的5件事</div>
+      </a>
+      <a href="article3.html" class="article__nav-link">
+        <div class="article__nav-label">下一篇 →</div>
+        <div class="article__nav-title">刺青後的保養秘訣</div>
+      </a>
+    </div>
+  </article>
+</body>
+</html>
