@@ -38,7 +38,7 @@ th{background:#f5f7fa}
     <h1>加班費精算機</h1>
 
     <label>基本時薪</label>
-    <input type="number" id="wage" value="215">
+    <input type="number" id="wage" value="260">
 
     <label>日期</label>
     <input type="date" id="date">
@@ -172,41 +172,62 @@ function calcOT(hourly, h, type) {
   return 0;
 }
 
-// 規則固定：每月25 ~ 次月24
+// 日期格式化
+function formatDate(dt) {
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth() + 1).padStart(2, '0');
+  const d = String(dt.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+// 取得薪資區間：當月25 ~ 次月24
 function getPeriod() {
   const inputVal = document.getElementById('date').value;
   const base = inputVal ? new Date(inputVal + "T00:00:00") : new Date();
   const y = base.getFullYear();
-  const m = base.getMonth();
+  const mIdx = base.getMonth();
 
   if (base.getDate() >= 25) {
-    // 當月25之後：區間 本月25 ~ 下個月24
     return {
-      start: new Date(y, m, 25),
-      end: new Date(y, m + 1, 24)
+      start: new Date(y, mIdx, 25),
+      end: new Date(y, mIdx + 1, 24)
     };
   } else {
-    // 當月25之前：區間 上個月25 ~ 本月24
     return {
-      start: new Date(y, m - 1, 25),
-      end: new Date(y, m, 24)
+      start: new Date(y, mIdx - 1, 25),
+      end: new Date(y, mIdx, 24)
     };
   }
 }
 
-// 領薪日：區間結束月份的下個月5號
+// 領薪日：區間結束次月5號
 function getPayday(endDate) {
   return new Date(endDate.getFullYear(), endDate.getMonth() + 1, 5);
 }
 
 function inPeriod(ymd, start, end) {
-  const d = new Date(ymd + 'T00:00:00');
-  return d >= start && d <= end;
+  const target = new Date(ymd + "T00:00:00");
+  return target >= start && target <= end;
 }
 
-function getTotalDays(s, e) {
-  const oneDay = 24 * 60 * 60 * 1000;
-  return Math.round((e - s) / oneDay) + 1;
+function countTotalDays(start, end) {
+  const msPerDay = 24 * 60 * 60 * 1000;
+  return Math.round((end - start) / msPerDay) + 1;
+}
+
+// 遍歷整個區間，計算區間內全部平日/休息日/國定假日總數
+function calcAllDayTypeCount(start, end) {
+  let wd = 0, rt = 0, hd = 0;
+  let current = new Date(start);
+  while (current <= end) {
+    const ymd = formatDate(current);
+    const info = checkDate(ymd);
+    if (info.isHoliday) hd++;
+    else if (info.isWeekend) rt++;
+    else wd++;
+    current.setDate(current.getDate() + 1);
+  }
+  return { allWeekday: wd, allRest: rt, allHoliday: hd };
 }
 
 function add() {
@@ -248,60 +269,65 @@ function show() {
   const wage = parseFloat(document.getElementById('wage').value) || 0;
   const { start, end } = getPeriod();
   const payday = getPayday(end);
-  const totalRangeDays = getTotalDays(start, end);
+  const totalDays = countTotalDays(start, end);
 
-  const periodItems = data.filter(x => inPeriod(x.d, start, end));
-  const workDays = periodItems.length;
-  const offDays = totalRangeDays - workDays;
+  // 1. 整個區間全部天數分類統計（未上班也算進去）
+  const allCount = calcAllDayTypeCount(start, end);
 
-  periodItems.forEach((item, idx)=>{
-    const ot = parseFloat(item.ot)||0;
-    const leaveDeduct = parseFloat(item.leaveDeduct)||0;
-    const hours = parseFloat(item.h)||0;
+  // 2. 使用者已新增的出勤紀錄
+  const listInRange = data.filter(item => inPeriod(item.d, start, end));
+  const workTotal = listInRange.length;
+  const noWorkTotal = totalDays - workTotal;
+
+  listInRange.forEach(item => {
+    const ot = Number(item.ot) || 0;
+    const leaveDeduct = Number(item.leaveDeduct) || 0;
+    const hours = Number(item.h) || 0;
 
     sumOT += ot;
     sumLeave += leaveDeduct;
 
-    let amt = ot;
-    if(item.t === 'weekday') {
-      amt = wage * 8 + ot - leaveDeduct;
+    let showAmount = ot;
+    if (item.t === 'weekday') {
+      showAmount = wage * 8 + ot - leaveDeduct;
       totalWeekdayHours += hours;
     } else {
       totalOTHours += hours;
     }
 
-    tb.innerHTML += `<tr>
+    tb.innerHTML += `
+    <tr>
       <td>${item.d}</td>
       <td>${item.h || 0}</td>
       <td>${item.leaveH || 0}</td>
       <td>${typeShort[item.t]}</td>
-      <td>${amt.toFixed(4)}</td>
+      <td>${showAmount.toFixed(4)}</td>
       <td><button class="btn-del" onclick="del(${data.indexOf(item)})">刪</button></td>
     </tr>`;
 
     if(item.t === 'weekday') {
       sumBase += wage * 8;
       cntWeekday++;
-    }else if(item.t === 'rest') cntRest++;
-    else if(item.t === 'holiday') cntHoliday++;
+    } else if(item.t === 'rest') {
+      cntRest++;
+    } else if(item.t === 'holiday') {
+      cntHoliday++;
+    }
   });
 
-  const final = sumBase + sumOT - sumLeave;
+  const finalPay = sumBase + sumOT - sumLeave;
 
   document.getElementById('baseTotal').innerText = sumBase.toFixed(4);
   document.getElementById('otTotal').innerText = sumOT.toFixed(4);
   document.getElementById('leaveTotal').innerText = sumLeave.toFixed(4);
-  document.getElementById('final').innerText = Math.round(final);
-
-  // 格式化日期字串，強制輸出 yyyy-MM-dd
-  const fmt = dt => dt.getFullYear() + "-" + String(dt.getMonth()+1).padStart(2,"0") + "-" + String(dt.getDate()).padStart(2,"0");
+  document.getElementById('final').innerText = Math.round(finalPay);
 
   document.getElementById('dayStat').innerText =
-`薪資區間：${fmt(start)} ～ ${fmt(end)}
-領薪日：${fmt(payday)}
-區間總天數：${totalRangeDays}天
-實際出勤：${workDays}天｜未上班：${offDays}天
-｜平日${cntWeekday}｜休假日${cntRest}｜國定假日${cntHoliday}`;
+`薪資區間：${formatDate(start)} ～ ${formatDate(end)}
+領薪日：${formatDate(payday)}
+區間總天數：${totalDays}天
+｜平日${allCount.allWeekday}｜休假日${allCount.allRest}｜國定假日${allCount.allHoliday}
+實際出勤：${workTotal}天｜未上班：${noWorkTotal}天`;
 
   document.getElementById('hourStat').innerText =
 `平日加班總時數：${totalWeekdayHours}
