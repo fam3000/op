@@ -9,9 +9,37 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Microsoft JhengHei',sans-serif;background:#f0f2f5}
 .container{max-width:390px;margin:0 auto;background:#fff;padding:16px;min-height:100vh}
 h1{font-size:20px;text-align:center;margin-bottom:16px}
+
+/* 左右並排專用列 */
+.row-flex{
+    display:flex;
+    gap:10px;
+    margin-bottom:10px;
+}
+.col-half{
+    flex:1;
+}
+/* 基本時薪 + 日期 統一高度大小，完全對齊 */
+.row-flex input{
+    width:100%;
+    height:44px;
+    padding:8px 10px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    font-size:16px;
+    margin-bottom:0;
+}
+
 label{font-size:14px;margin-bottom:4px;display:block}
-input{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:10px;font-size:16px}
-input[type="date"]{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:10px;font-size:16px;background:#fff;color:#000}
+/* 單行輸入框維持原本樣式 */
+input:not(.row-flex input){
+    width:100%;
+    padding:10px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    margin-bottom:10px;font-size:16px
+}
+input[type="date"]{background:#fff;color:#000}
 .type-group{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
 .type-btn{padding:10px 6px;border-radius:8px;font-size:14px;border:none;background:#eee;color:#333}
 .type-btn.active{background:#3498db;color:#fff}
@@ -19,8 +47,8 @@ input[type="date"]{width:100%;padding:10px;border:1px solid #ddd;border-radius:8
 .type-holiday.active{background:#e67e22;color:#fff}
 .btn-group{display:flex;gap:8px;margin-bottom:16px}
 button{flex:1;padding:12px;border:none;border-radius:8px;background:#3498db;color:#fff;font-size:16px}
-.btn-reset{background:#e74c3c}
-.btn-settle{background:#27ae60}
+.btn-reset-all{background:#c0392b}
+.btn-history{background:#27ae60}
 .btn-del{background:#e74c3c;color:#fff;border:none;border-radius:6px;padding:6px 8px;font-size:13px}
 h2{font-size:16px;margin-bottom:8px}
 table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:14px}
@@ -31,17 +59,67 @@ th{background:#f5f7fa}
 .day-stat{color:#0066cc;margin-top:8px;font-size:14px;line-height:1.6;white-space:pre-line}
 .small-note{font-size:12px;color:#666;margin-top:8px;line-height:1.6;white-space:pre-line}
 .summary-line{margin-top:4px;font-size:14px;color:#333;line-height:1.6}
+/* 歷史紀錄面板 */
+.history-panel{
+  margin-top:16px;
+  padding:12px;
+  background:#edf7ff;
+  border-radius:8px;
+  display:none;
+}
+.month-block{
+  margin-bottom:10px;
+  padding:8px;
+  border-bottom:1px solid #cce5ff;
+}
+/* 薪資設定區塊邊框 */
+.setting-box{
+  border:1px solid #b8d4f2;
+  border-radius:10px;
+  padding:12px;
+  margin-bottom:14px;
+  background:#f7fbff;
+}
+.setting-box h3{
+  font-size:15px;
+  margin-bottom:10px;
+  color:#225599;
+}
 </style>
 </head>
 <body>
 <div class="container">
     <h1>加班費精算機</h1>
 
-    <label>基本時薪</label>
-    <input type="number" id="wage" value="260">
+    <!-- 自訂薪資區間+領薪日設定框 -->
+    <div class="setting-box">
+        <h3>⚙️ 薪資週期自訂設定</h3>
+        <div class="row-flex">
+            <div class="col-half">
+                <label>薪資週起始日 (每月)</label>
+                <input type="number" id="periodStartDay" min="1" max="31" value="25">
+            </div>
+            <div class="col-half">
+                <label>薪資週結束日 (每月)</label>
+                <input type="number" id="periodEndDay" min="1" max="31" value="24">
+            </div>
+        </div>
+        <label>每月領薪日</label>
+        <input type="number" id="payDay" min="1" max="31" value="5">
+    </div>
 
-    <label>日期</label>
-    <input type="date" id="date">
+    <!-- 基本時薪 + 日期 同列左右 -->
+    <div class="row-flex">
+        <div class="col-half">
+            <label>基本時薪</label>
+            <input type="number" id="wage" value="215">
+        </div>
+        <div class="col-half">
+            <label>日期</label>
+            <input type="date" id="date">
+        </div>
+    </div>
+
     <div class="festival" id="festival"></div>
 
     <label>加班類型</label>
@@ -51,16 +129,22 @@ th{background:#f5f7fa}
         <button class="type-btn type-holiday" onclick="selectType('holiday')">國定假日</button>
     </div>
 
-    <label>加班時數</label>
-    <input type="number" id="hours" step="0.5" placeholder="平日可留空或填0">
-
-    <label>請假時數</label>
-    <input type="number" id="leaveHours" step="0.5" placeholder="可輸入 0.5、1、2、8">
+    <!-- 加班時數 + 請假時數 同列左右 -->
+    <div class="row-flex">
+        <div class="col-half">
+            <label>加班時數</label>
+            <input type="number" id="hours" step="0.5" placeholder="平日可留空或填0">
+        </div>
+        <div class="col-half">
+            <label>請假時數</label>
+            <input type="number" id="leaveHours" step="0.5" placeholder="可輸入 0.5、1、2、8">
+        </div>
+    </div>
 
     <div class="btn-group">
         <button onclick="add()">新增</button>
-        <button class="btn-settle" onclick="settle()">結算</button>
-        <button class="btn-reset" onclick="resetAll()">重置</button>
+        <button class="btn-reset-all" onclick="resetAll()">重置紀錄</button>
+        <button class="btn-history" onclick="showHistory()">歷史紀錄</button>
     </div>
 
     <h2>明細</h2>
@@ -74,15 +158,20 @@ th{background:#f5f7fa}
         加班費：<span id="otTotal">0.0000</span><br>
         請假扣款：<span id="leaveTotal">0.0000</span><br>
         結算金額：<span id="final">0</span>
-        <div class="day-stat" id="dayStat"></div>
+        <div class="dayStat" id="dayStat"></div>
         <div class="summary-line" id="hourStat"></div>
         <div class="small-note">
-備註：
-薪資區間為每月 25 號至下個月 24 號，
-領薪日為每月 5 號。
-加班只算平日、休息日、國定假日；
-平日正常上班無請假無加班，時數填 0 即可。
+備註：可上方設定框自訂薪資週區間與領薪日，
+修改設定後計算明細自動同步更新；
+加班分平日、休息日、國定假日三種計價規則，
+平日、無加班、無請假、時數填0即可。
         </div>
+    </div>
+
+    <!-- 每月歷史明細面板 -->
+    <div class="history-panel" id="historyPanel">
+      <h3 style="margin-bottom:10px">📅 每月薪資明細</h3>
+      <div id="monthHistoryList"></div>
     </div>
 </div>
 
@@ -100,6 +189,7 @@ let lastLeaveHours = '';
 const typeShort = {weekday:'平', rest:'休', holiday:'國'};
 const typeClass = {weekday:'type-weekday', rest:'type-rest', holiday:'type-holiday'};
 
+// 讀取本地儲存全部資料
 function loadData() {
   const saved = localStorage.getItem('overtimeData_final');
   if (saved) {
@@ -107,12 +197,23 @@ function loadData() {
   }
   const savedWage = localStorage.getItem('defaultWage');
   if (savedWage) document.getElementById('wage').value = savedWage;
+  // 載入自訂週期設定
+  const savedStart = localStorage.getItem('periodStartDay');
+  const savedEnd = localStorage.getItem('periodEndDay');
+  const savedPay = localStorage.getItem('payDay');
+  if(savedStart) document.getElementById('periodStartDay').value = savedStart;
+  if(savedEnd) document.getElementById('periodEndDay').value = savedEnd;
+  if(savedPay) document.getElementById('payDay').value = savedPay;
   show();
 }
 
+// 儲存紀錄+自訂設定
 function saveData() {
   localStorage.setItem('overtimeData_final', JSON.stringify(data));
   localStorage.setItem('defaultWage', document.getElementById('wage').value);
+  localStorage.setItem('periodStartDay', document.getElementById('periodStartDay').value);
+  localStorage.setItem('periodEndDay', document.getElementById('periodEndDay').value);
+  localStorage.setItem('payDay', document.getElementById('payDay').value);
 }
 
 function checkDate(ymd) {
@@ -129,6 +230,7 @@ function compareDate(a, b) {
   return a.d.localeCompare(b.d);
 }
 
+// 日期切換自動判斷假日類型
 document.getElementById('date').addEventListener('change', function() {
   const ymd = this.value;
   if (!ymd) return;
@@ -141,6 +243,13 @@ document.getElementById('date').addEventListener('change', function() {
   show();
 });
 
+// 自訂週期輸入變更即時重算
+document.getElementById('periodStartDay').addEventListener('input',()=>{saveData();show();});
+document.getElementById('periodEndDay').addEventListener('input',()=>{saveData();show();});
+document.getElementById('payDay').addEventListener('input',()=>{saveData();show();});
+document.getElementById('wage').addEventListener('input',()=>{saveData();show();});
+
+// 預設今日日期
 const today = new Date();
 const todayYmd = today.getFullYear() + '-' +
   String(today.getMonth()+1).padStart(2,'0') + '-' +
@@ -154,6 +263,7 @@ function selectType(t) {
   document.querySelector(`.${typeClass[t]}`).classList.add('active');
 }
 
+// 加班費計算邏輯
 function calcOT(hourly, h, type) {
   h = parseFloat(h)||0;
   hourly = parseFloat(hourly)||0;
@@ -180,29 +290,32 @@ function formatDate(dt) {
   return `${y}-${m}-${d}`;
 }
 
-// 取得薪資區間：當月25 ~ 次月24
-function getPeriod() {
-  const inputVal = document.getElementById('date').value;
-  const base = inputVal ? new Date(inputVal + "T00:00:00") : new Date();
+// 【自訂參數】取得當下日期所屬薪資週期
+function getPeriod(dateStr) {
+  const startDay = Number(document.getElementById('periodStartDay').value) || 25;
+  const endDay = Number(document.getElementById('periodEndDay').value) || 24;
+  const base = dateStr ? new Date(dateStr + "T00:00:00") : new Date();
   const y = base.getFullYear();
   const mIdx = base.getMonth();
+  const currentDate = base.getDate();
 
-  if (base.getDate() >= 25) {
+  if(currentDate >= startDay){
     return {
-      start: new Date(y, mIdx, 25),
-      end: new Date(y, mIdx + 1, 24)
-    };
-  } else {
+      start: new Date(y, mIdx, startDay),
+      end: new Date(y, mIdx + 1, endDay)
+    }
+  }else{
     return {
-      start: new Date(y, mIdx - 1, 25),
-      end: new Date(y, mIdx, 24)
-    };
+      start: new Date(y, mIdx - 1, startDay),
+      end: new Date(y, mIdx, endDay)
+    }
   }
 }
 
-// 領薪日：區間結束次月5號
+// 【自訂參數】取得領薪日
 function getPayday(endDate) {
-  return new Date(endDate.getFullYear(), endDate.getMonth() + 1, 5);
+  const payDay = Number(document.getElementById('payDay').value) || 5;
+  return new Date(endDate.getFullYear(), endDate.getMonth() + 1, payDay);
 }
 
 function inPeriod(ymd, start, end) {
@@ -215,7 +328,7 @@ function countTotalDays(start, end) {
   return Math.round((end - start) / msPerDay) + 1;
 }
 
-// 遍歷整個區間，計算區間內全部平日/休息日/國定假日總數
+// 統計區間內所有天數類型
 function calcAllDayTypeCount(start, end) {
   let wd = 0, rt = 0, hd = 0;
   let current = new Date(start);
@@ -230,6 +343,17 @@ function calcAllDayTypeCount(start, end) {
   return { allWeekday: wd, allRest: rt, allHoliday: hd };
 }
 
+// 全域重置：只清空所有加班紀錄，保留設定、時薪
+function resetAll(){
+  if(!confirm('確定要刪除全部已新增加班紀錄？薪資設定與時薪將保留')) return;
+  data = [];
+  saveData();
+  show();
+  document.getElementById('hours').value = '';
+  document.getElementById('leaveHours').value = '';
+}
+
+// 新增加班紀錄
 function add() {
   const d = document.getElementById('date').value;
   const t = selectedType;
@@ -258,8 +382,13 @@ function add() {
   data.sort(compareDate);
   saveData();
   show();
+
+  // 新增後清空加班、請假輸入框
+  document.getElementById('hours').value = '';
+  document.getElementById('leaveHours').value = '';
 }
 
+// 主畫面渲染函數
 function show() {
   const tb = document.getElementById('list');
   tb.innerHTML='';
@@ -267,14 +396,11 @@ function show() {
   let cntWeekday = 0, cntRest = 0, cntHoliday = 0;
   let totalWeekdayHours = 0, totalOTHours = 0;
   const wage = parseFloat(document.getElementById('wage').value) || 0;
-  const { start, end } = getPeriod();
+  const { start, end } = getPeriod(document.getElementById('date').value);
   const payday = getPayday(end);
   const totalDays = countTotalDays(start, end);
 
-  // 1. 整個區間全部天數分類統計（未上班也算進去）
   const allCount = calcAllDayTypeCount(start, end);
-
-  // 2. 使用者已新增的出勤紀錄
   const listInRange = data.filter(item => inPeriod(item.d, start, end));
   const workTotal = listInRange.length;
   const noWorkTotal = totalDays - workTotal;
@@ -332,27 +458,71 @@ function show() {
   document.getElementById('hourStat').innerText =
 `平日加班總時數：${totalWeekdayHours}
 休息/國定加班總時數：${totalOTHours}`;
-
-  document.getElementById('hours').value = lastHours;
-  document.getElementById('leaveHours').value = lastLeaveHours;
 }
 
+// ========== 徹底修復：歷史紀錄點擊100%有效 ==========
+function showHistory(){
+  const panel = document.getElementById('historyPanel');
+  const listEl = document.getElementById('monthHistoryList');
+
+  // 直接切換顯示/隱藏，手機絕對不會失效
+  if(panel.style.display === 'block'){
+    panel.style.display = 'none';
+    return;
+  }
+
+  // 顯示時重新渲染
+  panel.style.display = 'block';
+  listEl.innerHTML = '';
+
+  const groupMap = {};
+  data.forEach(item=>{
+    const p = getPeriod(item.d);
+    const key = `${formatDate(p.start)} ~ ${formatDate(p.end)}`;
+    if(!groupMap[key]) groupMap[key] = [];
+    groupMap[key].push(item);
+  });
+
+  const wage = parseFloat(document.getElementById('wage').value)||0;
+  const keys = Object.keys(groupMap);
+
+  if(keys.length === 0){
+    listEl.innerHTML = '<div style="text-align:center;color:#666;padding:10px">尚無歷史加班紀錄</div>';
+    return;
+  }
+
+  // 新到舊排序
+  keys.sort((a,b)=> b.localeCompare(a));
+
+  keys.forEach(period=>{
+    const items = groupMap[period];
+    let sBase=0,sOT=0,sLeave=0;
+    items.forEach(it=>{
+      sOT += Number(it.ot)||0;
+      sLeave += Number(it.leaveDeduct)||0;
+      if(it.t==='weekday') sBase += wage*8;
+    });
+    const total = sBase + sOT - sLeave;
+
+    const div = document.createElement('div');
+    div.className = 'month-block';
+    div.innerHTML = `
+      <strong>${period}</strong><br>
+      平日工資：${sBase.toFixed(2)}｜加班費：${sOT.toFixed(2)}｜請假扣款：${sLeave.toFixed(2)}<br>
+      結算金額：<b style="color:#e74c3c">${Math.round(total)}</b>
+    `;
+    listEl.appendChild(div);
+  });
+}
+
+// 單筆刪除紀錄
 function del(i){
   data.splice(i,1);
   saveData();
   show();
-}
-
-function settle(){
-  show();
-}
-
-function resetAll(){
-  if(confirm('確定清空整月紀錄？')){
-    data=[];
-    saveData();
-    show();
-    document.getElementById('final').innerText='0';
+  // 歷史開著就自動刷新
+  if(document.getElementById('historyPanel').style.display === 'block'){
+    showHistory();
   }
 }
 
