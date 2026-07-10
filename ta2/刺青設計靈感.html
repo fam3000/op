@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>刺青設計靈感生成器</title>
+    <style>
+        :root {
+  --color-white: rgba(255, 255, 255, 1);
+  --color-black: rgba(0, 0, 0, 1);
+  --color-cream-50: rgba(252, 252, 249, 1);
+  --color-cream-100: rgba(255, 255, 253, 1);
+  --color-gray-200: rgba(245, 245, 245, 1);
+  --color-gray-300: rgba(167, 169, 169, 1);
+  --color-gray-400: rgba(119, 124, 124, 1);
+  --color-slate-500: rgba(98, 108, 113, 1);
+  --color-brown-600: rgba(94, 82, 64, 1);
+  --color-charcoal-700: rgba(31, 33, 33, 1);
+  --color-charcoal-800: rgba(38, 40, 40, 1);
+  --color-slate-900: rgba(19, 52, 59, 1);
+  --color-teal-300: rgba(50, 184, 198, 1);
+  --color-teal-400: rgba(45, 166, 178, 1);
+  --color-teal-500: rgba(33, 128, 141, 1);
+  --color-teal-600: rgba(29, 116, 128, 1);
+  --color-teal-700: rgba(26, 104, 115, 1);
+  --color-teal-800: rgba(41, 150, 161, 1);
+  --color-red-400: rgba(255, 84, 89, 1);
+  --color-red-500: rgba(192, 21, 47, 1);
+  --color-orange-400: rgba(230, 129, 97, 1);
+  --color-orange-500: rgba(168, 75, 47, 1);
+  --color-brown-600-rgb: 94, 82, 64;
+  --color-teal-500-rgb: 33, 128, 141;
+  --color-slate-900-rgb: 19, 52, 59;
+  --color-slate-500-rgb: 98, 108, 113;
+  --color-background: var(--color-cream-50);
+  --color-surface: var(--color-cream-100);
+  --color-text: var(--color-slate-900);
+  --color-text-secondary: var(--color-slate-500);
+  --color-primary: var(--color-teal-500);
+  --color-primary-hover: var(--color-teal-600);
+  --color-border: rgba(var(--color-brown-600-rgb), 0.2);
+  --color-bg-1: rgba(59, 130, 246, 0.08);
+  --font-family-base: 'PingFang TC', 'Microsoft JhengHei', 'Segoe UI', sans-serif;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --radius-base: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+}
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family-base);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f0e6 0%, #e8d9c5 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 900px;
+            min-height: 80vh;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .app-header {
+            background: #8b5a2b;
+            color: white;
+            padding: var(--space-20);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .favorites-btn {
+            background: #d4af37;
+            color: #1a1a1a;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .favorites-btn:hover {
+            background: #b8941f;
+            transform: translateY(-1px);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .step-indicator {
+            background: var(--color-bg-1);
+            padding: var(--space-16);
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--color-text-secondary);
+            font-weight: 500;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .selection-area {
+            padding: var(--space-24);
+            flex: 1;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #8b5a2b;
+            margin-bottom: var(--space-16);
+            text-align: center;
+        }
+
+        .mode-buttons {
+            display: flex;
+            gap: var(--space-16);
+            justify-content: center;
+            margin-top: var(--space-24);
+        }
+
+        .mode-btn {
+            flex: 1;
+            max-width: 200px;
+            padding: 20px 30px;
+            background: linear-gradient(135deg, #8b5a2b 0%, #6d4522 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(139, 90, 43, 0.3);
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 90, 43, 0.4);
+        }
+
+        .mode-btn:active {
+            transform: translateY(0);
+        }
+
+        #theme-accordion {
+            margin-top: var(--space-16);
+        }
+
+        #theme-accordion > div {
+            margin-bottom: 10px;
+        }
+
+        .accordion-btn {
+            width: 100%;
+            text-align: left;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: var(--space-12);
+            margin-top: var(--space-16);
+        }
+
+        #theme-accordion .options-grid {
+            margin-top: var(--space-8);
+            padding-left: var(--space-8);
+        }
+
+        .option-btn {
+            padding: 12px 16px;
+            background: white;
+            color: #8b5a2b;
+            border: 2px solid #d4af37;
+            border-radius: 24px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            position: relative;
+        }
+
+        .option-btn:hover {
+            background: #fef9f0;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+        }
+
+        .option-btn.selected {
+            background: #d4af37;
+            color: white;
+            border-color: #b8941f;
+            font-weight: 600;
+        }
+
+        .option-btn.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            font-size: 0.8rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--space-12);
+            justify-content: center;
+            margin-top: var(--space-24);
+            padding-top: var(--space-20);
+            border-top: 1px solid var(--color-border);
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-back {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .btn-back:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-next {
+            background: #d4af37;
+            color: #1a1a1a;
+            padding: 12px 36px;
+        }
+
+        .btn-next:hover {
+            background: #b8941f;
+            transform: translateY(-1px);
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, #8b5a2b 0%, #6d4522 100%);
+            color: white;
+            padding: 12px 40px;
+            box-shadow: 0 4px 12px rgba(139, 90, 43, 0.3);
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 90, 43, 0.4);
+        }
+
+        .results-area {
+            padding: var(--space-24);
+            background: #fafafa;
+            border-top: 1px solid var(--color-border);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: var(--space-16);
+            padding: 16px;
+            border-radius: 12px;
+            line-height: 1.6;
+            animation: fadeIn 0.3s ease;
+            position: relative;
+            background: #f5f0e6;
+            color: #1a1a1a;
+            padding-right: 50px;
+            min-height: 120px;
+        }
+
+        .save-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: transparent;
+            border: none;
+            color: #d4af37;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .save-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+            transform: scale(1.1);
+        }
+
+        .save-btn.saved {
+            color: #e74c3c;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 12px 18px;
+            background: #f5f0e6;
+            border-radius: 18px;
+            width: fit-content;
+        }
+
+        .typing-indicator.active {
+            display: block;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #9e9e9e;
+            border-radius: 50%;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+
+        .favorites-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .favorites-modal.active {
+            display: flex;
+        }
+
+        .favorites-content {
+            background: white;
+            padding: var(--space-24);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .favorites-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-16);
+            padding-bottom: var(--space-12);
+            border-bottom: 2px solid #d4af37;
+        }
+
+        .favorites-header h2 {
+            color: #8b5a2b;
+            font-size: 1.3rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #666;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: rgba(139, 90, 43, 0.1);
+            color: #8b5a2b;
+        }
+
+        .favorite-item {
+            padding: 20px;
+            margin-bottom: var(--space-16);
+            background: #f5f0e6;
+            border-radius: var(--radius-base);
+            position: relative;
+            line-height: 2.0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .favorite-item-content {
+            padding-right: 80px;
+            margin-bottom: 8px;
+            line-height: 2.0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-size: 1rem;
+        }
+
+        .favorite-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .favorite-action-btn {
+            background: white;
+            border: 1px solid #d4af37;
+            color: #8b5a2b;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-size: 14px;
+            padding: 0;
+        }
+
+        .favorite-action-btn:hover {
+            background: #fef9f0;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(212, 175, 55, 0.3);
+        }
+
+        .favorite-action-btn.remove:hover {
+            background: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+
+
+
+        .empty-state {
+            text-align: center;
+            padding: var(--space-24);
+            color: var(--color-text-secondary);
+        }
+
+        .progress-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .progress-bar-wrapper {
+            width: 80%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 20px;
+            margin: 10px auto;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37 0%, #8b5a2b 100%);
+            border-radius: 20px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            font-size: 0.95rem;
+            color: #8b5a2b;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                height: 95vh;
+                border-radius: 8px;
+            }
+            .app-header {
+                padding: var(--space-16);
+            }
+            .header-title {
+                font-size: 1.1rem;
+            }
+            .favorites-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+            .selection-area {
+                padding: var(--space-16);
+            }
+            .mode-buttons {
+                flex-direction: column;
+            }
+            .mode-btn {
+                max-width: 100%;
+            }
+            .options-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: var(--space-8);
+            }
+            .option-btn {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+            .action-buttons {
+                flex-wrap: wrap;
+            }
+            .results-area {
+                padding: var(--space-16);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="app-header">
+            <div class="header-title">刺青設計靈感生成器</div>
+            <button class="favorites-btn" onclick="showFavorites()">收藏列表</button>
+        </div>
+        <div class="step-indicator" id="step-indicator">第 1/5 步:選擇生成模式</div>
+        <div class="main-content">
+            <div class="selection-area" id="step1">
+                <div class="section-title">請選擇生成模式</div>
+                <div class="mode-buttons">
+                    <button class="mode-btn" onclick="selectMode('random')">🎲 隨機生成</button>
+                    <button class="mode-btn" onclick="selectMode('specify')">🎯 指定生成</button>
+                </div>
+            </div>
+            <div class="selection-area hidden" id="step2">
+                <div class="section-title">選擇主題與分類(可多選)</div>
+                <div id="theme-accordion"></div>
+                <div class="action-buttons">
+                    <button class="btn btn-back" onclick="goToStep(1)">← 上一步</button>
+                    <button class="btn btn-next" onclick="goToStep(3)">下一步 →</button>
+                    <button class="btn btn-next" onclick="goToStep(1)">回主頁</button>
+                </div>
+            </div>
+            <div class="selection-area hidden" id="step3">
+                <div class="section-title">選擇刺青風格(可多選)</div>
+                <div class="options-grid" id="styles-grid"></div>
+                <div class="action-buttons">
+                    <button class="btn btn-back" onclick="goToStep(2)">← 上一步</button>
+                    <button class="btn btn-next" onclick="goToStep(4)">下一步 →</button>
+                    <button class="btn btn-next" onclick="goToStep(1)">回主頁</button>
+                </div>
+            </div>
+            <div class="selection-area hidden" id="step4">
+                <div class="section-title">選擇構圖要素(可多選)</div>
+                <div class="options-grid" id="elements-grid"></div>
+                <div class="action-buttons">
+                    <button class="btn btn-back" onclick="goToStep(3)">← 上一步</button>
+                    <button class="btn btn-next" onclick="goToStep(5)">下一步 →</button>
+                    <button class="btn btn-next" onclick="goToStep(1)">回主頁</button>
+                </div>
+            </div>
+            <div class="selection-area hidden" id="step5">
+                <div class="section-title">說明屬性(可多選)</div>
+                <div class="options-grid" id="attributes-grid"></div>
+                <div class="action-buttons">
+                    <button class="btn btn-back" onclick="goToStep(4)">← 上一步</button>
+                    <button class="btn btn-generate" onclick="generatePrompt()">🎨 生成</button>
+                    <button class="btn btn-next" onclick="goToStep(1)">回主頁</button>
+                </div>
+            </div>
+            <div class="results-area hidden" id="results-area">
+                <div class="typing-indicator" id="typing-indicator">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+                <div id="results-container"></div>
+            </div>
+        </div>
+    </div>
+    <div class="favorites-modal" id="favorites-modal" onclick="closeModalOnOutside(event)">
+        <div class="favorites-content" onclick="event.stopPropagation()">
+            <div class="favorites-header">
+                <h2>收藏的設計提示</h2>
+                <button class="close-btn" onclick="closeFavorites()">&times;</button>
+            </div>
+            <div id="favorites-list"></div>
+        </div>
+    </div>
+    <script>
+const themesData = [
+  { category: '神話與傳說系', en_name: 'Myth & Legend', subcategories: [
+    { id: 'myth_east', label: '神話系(東方)' },
+    { id: 'myth_west', label: '神話系(西方)' },
+    { id: 'dragon_phoenix', label: '龍與鳳' },
+    { id: 'eight_celestial', label: '八大神獸' },
+    { id: 'greek_myth', label: '希臘神話' },
+    { id: 'norse_myth', label: '北歐神話' }
+  ]},
+  { category: '文學與經典人物系', en_name: 'Literature & Classic', subcategories: [
+    { id: 'chinese_lit', label: '中國文學人物' },
+    { id: 'three_kingdoms', label: '三國演義' },
+    { id: 'journey_west', label: '西遊記' },
+    { id: 'western_lit', label: '西方文學人物' },
+    { id: 'seven_sins', label: '七宗罪' },
+    { id: 'fantasy_char', label: '奇幻角色' }
+  ]},
+  { category: '宗教/哲學/精神系', en_name: 'Religion & Spiritual', subcategories: [
+    { id: 'buddha', label: '佛像' },
+    { id: 'lotus', label: '蓮花' },
+    { id: 'taoism', label: '道教/民俗' },
+    { id: 'bodhidharma', label: '達摩/不倒翁' },
+    { id: 'talismans', label: '符咒與法器' }
+  ]},
+  { category: '日本傳統與戰士系', en_name: 'Japanese / Warrior', subcategories: [
+    { id: 'samurai', label: '武士' },
+    { id: 'sword_armor', label: '刀劍與盔甲' },
+    { id: 'geisha', label: '藝妓/花魁' },
+    { id: 'ukiyo_e', label: '浮世繪' },
+    { id: 'koi_fish', label: '鯉魚' }
+  ]},
+  { category: '自然與動植物系', en_name: 'Nature & Fauna/Flora', subcategories: [
+    { id: 'flower_jp', label: '花卉(日本)' },
+    { id: 'flower_west', label: '花卉(西方)' },
+    { id: 'tree_vine', label: '樹木/藤蔓' },
+    { id: 'bird', label: '動物—鳥類' },
+    { id: 'predator', label: '動物—猛獸' },
+    { id: 'insect', label: '動物—昆蟲' },
+    { id: 'aquatic', label: '動物—水生' }
+  ]},
+  { category: '抽象/符號/場景系', en_name: 'Abstract / Symbol / Scene', subcategories: [
+    { id: 'mask', label: '面具/臉譜' },
+    { id: 'wing', label: '翅膀/羽毛' },
+    { id: 'flame', label: '火焰/光芒' },
+    { id: 'wave', label: '波浪/水流' },
+    { id: 'landscape', label: '山水/自然景觀' },
+    { id: 'cosmos', label: '星象/宇宙' },
+    { id: 'magic', label: '魔法/奇幻元素' },
+    { id: 'skull', label: '骷髏/死亡象徵' },
+    { id: 'weapon', label: '道具/兵器' },
+    { id: 'vehicle', label: '船隻/交通工具' },
+    { id: 'geometric', label: '幾何/抽象紋理' },
+    { id: 'calligraphy', label: '書法/文字/符號' },
+    { id: 'folk_totem', label: '民俗/傳統圖騰' }
+  ]}
+];
+
+const styles = [
+  { id: 'realistic', label: '寫實' },
+  { id: 'dark', label: '暗黑' },
+  { id: 'new_traditional', label: '新傳統' },
+  { id: 'old_traditional', label: '老傳統' },
+  { id: 'new_school', label: 'New School' },
+  { id: 'old_school', label: 'Old School' },
+  { id: 'watercolor', label: '水彩' },
+  { id: 'ink_wash', label: '水墨' },
+  { id: 'geometric', label: '幾何' },
+  { id: 'dotwork', label: '點刺' },
+  { id: 'calligraphy', label: '花體字' },
+  { id: 'totem', label: '圖騰' }
+];
+
+const elements = [
+  { id: 'structure', label: '結構' },
+  { id: 'outline', label: '輪廓' },
+  { id: 'light_shadow', label: '光影' },
+  { id: 'texture', label: '質感' },
+  { id: 'foreground_middle_back', label: '前中後' },
+  { id: 'spatial_depth', label: '空間感' },
+  { id: 'dynamic', label: '動態' },
+  { id: 'effects', label: '效果' }
+];
+
+const attributes = [
+  { id: 'character', label: '角色', description: '角色/人物在主題中的位置或身份' },
+  { id: 'symbolism', label: '象徵', description: '主題背後的象徵意義' },
+  { id: 'thematic_position', label: '主題地位', description: '主題在作品中的核心或重要程度' },
+  { id: 'secondary_pairing', label: '次要搭配', description: '與主題搭配的次要元素' }
+];
+
+let currentStep = 1;
+let selectedThemes = [];
+let selectedStyles = [];
+let selectedElements = [];
+let selectedAttributes = [];
+let randomGenSelections = null;
+let generatedPrompts = [];
+
+function initializeApp() {
+  renderThemeAccordion();
+  renderStylesGrid();
+  renderElementsGrid();
+  renderAttributesGrid();
+  loadFavorites();
+}
+
+function renderThemeAccordion() {
+  const container = document.getElementById('theme-accordion');
+  let html = '';
+  themesData.forEach((cat, idx) => {
+    html += '<div><button class="option-btn accordion-btn" onclick="toggleThemeSection(' + idx + ')" id="section-btn-' + idx + '">' + cat.category + ' <span id="arrow-' + idx + '">▼</span></button><div class="options-grid" id="section-content-' + idx + '" style="display:none;">';
+    html += cat.subcategories.map(s => '<button class="option-btn" onclick="toggleTheme(\'' + s.id + '\')" id="theme-' + s.id + '">' + s.label + '</button>').join('');
+    html += '</div></div>';
+  });
+  container.innerHTML = html;
+}
+
+function renderStylesGrid() {
+  const grid = document.getElementById('styles-grid');
+  grid.innerHTML = styles.map(style => '<button class="option-btn" onclick="toggleOption(\'style\', \'' + style.id + '\')" id="style-' + style.id + '">' + style.label + '</button>').join('');
+}
+
+function renderElementsGrid() {
+  const grid = document.getElementById('elements-grid');
+  grid.innerHTML = elements.map(el => '<button class="option-btn" onclick="toggleOption(\'element\', \'' + el.id + '\')" id="element-' + el.id + '">' + el.label + '</button>').join('');
+}
+
+function renderAttributesGrid() {
+  const grid = document.getElementById('attributes-grid');
+  grid.innerHTML = attributes.map(attr => '<button class="option-btn selected" onclick="toggleOption(\'attribute\', \'' + attr.id + '\')" id="attribute-' + attr.id + '" title="' + attr.description + '">' + attr.label + '</button>').join('');
+  selectedAttributes = attributes.map(function(a) { return a.id; });
+}
+
+function toggleThemeSection(idx) {
+  const cont = document.getElementById('section-content-' + idx);
+  const arr = document.getElementById('arrow-' + idx);
+  if (cont.style.display === 'none') {
+    cont.style.display = 'grid';
+    arr.textContent = '▲';
+  } else {
+    cont.style.display = 'none';
+    arr.textContent = '▼';
+  }
+}
+
+function toggleTheme(id) {
+  const btn = document.getElementById('theme-' + id);
+  btn.classList.toggle('selected');
+  const idx = selectedThemes.indexOf(id);
+  if (idx > -1) {
+    selectedThemes.splice(idx, 1);
+  } else {
+    selectedThemes.push(id);
+  }
+}
+
+function toggleOption(type, id) {
+  const btn = document.getElementById(type + '-' + id);
+  btn.classList.toggle('selected');
+  if (type === 'style') {
+    const index = selectedStyles.indexOf(id);
+    if (index > -1) selectedStyles.splice(index, 1); else selectedStyles.push(id);
+  } else if (type === 'element') {
+    const index = selectedElements.indexOf(id);
+    if (index > -1) selectedElements.splice(index, 1); else selectedElements.push(id);
+  } else if (type === 'attribute') {
+    const index = selectedAttributes.indexOf(id);
+    if (index > -1) selectedAttributes.splice(index, 1); else selectedAttributes.push(id);
+  }
+}
+
+function selectMode(mode) {
+  resetSelections();
+  if (mode === 'random') {
+    randomGenSelections = getRandomSelections();
+    selectedThemes = randomGenSelections.themes;
+    selectedStyles = randomGenSelections.styles;
+    selectedElements = randomGenSelections.elements;
+    selectedAttributes = randomGenSelections.attributes;
+    showResultsArea();
+    setTimeout(function() { generatePrompt(); }, 500);
+  } else {
+    goToStep(2);
+  }
+}
+
+function goToStep(step) {
+  document.getElementById('step' + currentStep).classList.add('hidden');
+  currentStep = step;
+  document.getElementById('step' + currentStep).classList.remove('hidden');
+  const indicators = ['第 1/5 步:選擇生成模式', '第 2/5 步:主題分類', '第 3/5 步:刺青風格', '第 4/5 步:構圖要素', '第 5/5 步:說明屬性'];
+  document.getElementById('step-indicator').textContent = indicators[step - 1] || '生成結果';
+  if (step === 1) {
+    resetSelections();
+    document.getElementById('results-area').classList.add('hidden');
+  }
+}
+
+function resetSelections() {
+  selectedThemes = [];
+  selectedStyles = [];
+  selectedElements = [];
+  selectedAttributes = [];
+  document.querySelectorAll('.option-btn.selected').forEach(function(btn) { btn.classList.remove('selected'); });
+}
+
+function getRandomSelections() {
+  function randomPick(arr, min, max) {
+    const n = Math.floor(Math.random() * (max - min + 1)) + min;
+    arr = arr.slice();
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = temp;
+    }
+    return arr.slice(0, n);
+  }
+  const flatThemes = themesData.flatMap(function(c) { return c.subcategories.map(function(sc) { return sc.id; }); });
+  return {
+    themes: randomPick(flatThemes, 1, 2),
+    styles: randomPick(styles.map(function(s) { return s.id; }), 1, 2),
+    elements: randomPick(elements.map(function(e) { return e.id; }), 1, 2),
+    attributes: randomPick(attributes.map(function(a) { return a.id; }), 1, 2)
+  };
+}
+
+function showResultsArea() {
+  console.log('showResultsArea called, current step:', currentStep);
+  const currentStepEl = document.getElementById('step' + currentStep);
+  if (currentStepEl) {
+    currentStepEl.classList.add('hidden');
+    console.log('Hidden step' + currentStep);
+  }
+  const resultsArea = document.getElementById('results-area');
+  if (resultsArea) {
+    resultsArea.classList.remove('hidden');
+    console.log('Shown results area');
+  }
+  document.getElementById('step-indicator').textContent = '生成結果';
+  document.getElementById('results-container').innerHTML = '';
+}
+
+function getLabelById(list, ids) {
+  if (!Array.isArray(ids)) ids = [ids];
+  return ids.map(function(id) {
+    const found = list.find(function(i) { return i.id === id; });
+    return found ? found.label : '';
+  }).filter(Boolean);
+}
+
+function generatePrompt() {
+  console.log('=== generatePrompt called ===');
+  console.log('Current step:', currentStep);
+  console.log('Selected themes:', selectedThemes);
+  console.log('Selected styles:', selectedStyles);
+  console.log('Selected elements:', selectedElements);
+  console.log('Selected attributes:', selectedAttributes);
+  
+  let themes = selectedThemes;
+  let stylesSel = selectedStyles;
+  let elementsSel = selectedElements;
+  let attrsSel = selectedAttributes;
+  
+  if (randomGenSelections) {
+    console.log('Using random selections');
+    themes = randomGenSelections.themes;
+    stylesSel = randomGenSelections.styles;
+    elementsSel = randomGenSelections.elements;
+    attrsSel = randomGenSelections.attributes;
+    randomGenSelections = null;
+  }
+  
+  console.log('Final selections - themes:', themes, 'styles:', stylesSel, 'elements:', elementsSel, 'attrs:', attrsSel);
+  
+  if (!themes.length || !stylesSel.length || !elementsSel.length || !attrsSel.length) {
+    alert('主題/風格/構圖要素/屬性至少各選一');
+    console.error('Missing selections!');
+    return;
+  }
+  
+  console.log('All validations passed, showing results area');
+  showResultsArea();
+  showProgressBar();
+  showTypingIndicator();
+  const themeLabels = getLabelById(themesData.flatMap(function(c) { return c.subcategories; }), themes);
+  const styleLabels = getLabelById(styles, stylesSel);
+  const elementLabels = getLabelById(elements, elementsSel);
+  const attrLabels = getLabelById(attributes, attrsSel);
+  
+  const allThemes = themesData.flatMap(function(c) { return c.subcategories; });
+  let categoryName = '';
+  let subcategoryName = '';
+  if (themes.length > 0) {
+    const firstTheme = allThemes.find(function(t) { return t.id === themes[0]; });
+    if (firstTheme) {
+      subcategoryName = firstTheme.label;
+      const parentCat = themesData.find(function(c) {
+        return c.subcategories.some(function(sc) { return sc.id === themes[0]; });
+      });
+      if (parentCat) categoryName = parentCat.category;
+    }
+  }
+  
+  const apiPrompt = '請用繁體中文生成一個刺青設計概念。必須使用以下格式回答:\n\n主題：' + categoryName + '\n\n' + subcategoryName + '\n• 角色：[描述角色特徵，例如：傲慢、暴食、色欲等具體角色名稱]\n• 象徵：[描述象徵意義，例如：人格陰暗面、欲望、警示]\n• 主題地位：[描述在作品中的地位，例如：主題或副主題]\n• 次要搭配：[描述搭配元素，例如：火焰、鏡子、面具]\n\n要求：\n1. 主題為' + themeLabels.join('、') + '\n2. 風格為' + styleLabels.join('、') + '\n3. 構圖要素包含' + elementLabels.join('、') + '\n4. 強調' + attrLabels.join('、') + '\n5. 適合現代審美，具有藝術性\n6. 只回答上述格式的內容，不要包含其他說明';
+  
+  console.log('About to call API with prompt:', apiPrompt);
+  
+  callAPI(apiPrompt).then(function(result) {
+    console.log('API call successful, result:', result);
+    hideProgressBar();
+    hideTypingIndicator();
+    displayResult(result, { themeLabels: themeLabels, styleLabels: styleLabels, elementLabels: elementLabels, attrLabels: attrLabels });
+  }).catch(function(error) {
+    console.error('API Error caught:', error);
+    hideProgressBar();
+    hideTypingIndicator();
+    const fallbackResult = generateFallbackResult(categoryName, subcategoryName, themeLabels, styleLabels, elementLabels, attrLabels);
+    console.log('Using fallback result:', fallbackResult);
+    displayResult(fallbackResult, { themeLabels: themeLabels, styleLabels: styleLabels, elementLabels: elementLabels, attrLabels: attrLabels });
+  });
+}
+
+function generateFallbackResult(categoryName, subcategoryName, themeLabels, styleLabels, elementLabels, attrLabels) {
+  const characterExamples = ['主角形象', '對立角色', '守護者', '引導者', '象徵性角色'];
+  const symbolismExamples = ['力量與保護', '轉變與重生', '智慧與神秘', '平衡與和諧', '自由與勇氣'];
+  const positionExamples = ['核心主題', '主要元素', '副主題', '裝飾性元素'];
+  const pairingExamples = ['幾何圖案', '花卉紋飾', '雲霧效果', '文字符號', '光影漸層'];
+  
+  return '主題：' + (categoryName || themeLabels[0]) + '\n\n' + (subcategoryName || themeLabels[0]) + '\n• 角色：' + characterExamples[Math.floor(Math.random() * characterExamples.length)] + '、展現' + styleLabels[0] + '風格特質\n• 象徵：' + symbolismExamples[Math.floor(Math.random() * symbolismExamples.length)] + '、體現主題精神\n• 主題地位：' + positionExamples[Math.floor(Math.random() * positionExamples.length)] + '\n• 次要搭配：' + pairingExamples[Math.floor(Math.random() * pairingExamples.length)] + '、' + elementLabels.join('、');
+}
+
+function showProgressBar() {
+  const container = document.getElementById('results-container');
+  const progressDiv = document.createElement('div');
+  progressDiv.id = 'progress-container';
+  progressDiv.className = 'progress-container';
+  progressDiv.innerHTML = '<div class="progress-bar-wrapper"><div class="progress-bar-fill" id="progress-fill"></div></div><div class="progress-text" id="progress-text">準備中... 0%</div>';
+  container.appendChild(progressDiv);
+  
+  setTimeout(function() {
+    updateProgress(20, '準備中... 20%');
+  }, 300);
+  setTimeout(function() {
+    updateProgress(50, '詢問AI中... 50%');
+  }, 1200);
+  setTimeout(function() {
+    updateProgress(80, '生成中... 80%');
+  }, 2500);
+}
+
+function updateProgress(percent, text) {
+  const fill = document.getElementById('progress-fill');
+  const textEl = document.getElementById('progress-text');
+  if (fill) fill.style.width = percent + '%';
+  if (textEl) textEl.textContent = text;
+}
+
+function hideProgressBar() {
+  const progressContainer = document.getElementById('progress-container');
+  if (progressContainer) {
+    updateProgress(100, '完成! 100%');
+    setTimeout(function() {
+      progressContainer.remove();
+    }, 800);
+  }
+}
+
+function callAPI(prompt) {
+  console.log('callAPI function called');
+  return new Promise(function(resolve, reject) {
+    console.log('Setting up API call with 8 second timeout');
+    const timeout = setTimeout(function() {
+      console.log('API timeout reached, using fallback');
+      reject(new Error('API timeout'));
+    }, 8000);
+    
+    console.log('Making fetch request...');
+    fetch('https://text.pollinations.ai/' + encodeURIComponent(prompt), {
+      method: 'GET'
+    }).then(function(response) {
+      console.log('Fetch response received:', response.status);
+      clearTimeout(timeout);
+      if (!response.ok) {
+        console.error('Response not ok:', response.status);
+        throw new Error('API response not ok: ' + response.status);
+      }
+      return response.text();
+    }).then(function(text) {
+      console.log('Response text received, length:', text.length);
+      if (text && text.length > 0) {
+        resolve(text);
+      } else {
+        console.error('Empty response');
+        reject(new Error('Empty API response'));
+      }
+    }).catch(function(error) {
+      console.error('Fetch error:', error);
+      clearTimeout(timeout);
+      reject(error);
+    });
+  });
+}
+
+function displayResult(promptText, details) {
+  details = details || {};
+  const container = document.getElementById('results-container');
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'message';
+  
+  const contentDiv = document.createElement('div');
+  contentDiv.style = 'padding-right: 0; margin-bottom: 50px;';
+  
+  let detailsHtml = '';
+  if (details.themeLabels || details.styleLabels || details.elementLabels) {
+    detailsHtml += '<div style="font-size:0.9em; margin-bottom:10px; line-height:1.6; color:#666; padding:8px; background:rgba(212,175,55,0.1); border-radius:6px;"><b>選擇的條件：</b><br>主題：' + (details.themeLabels || []).join('、') + '<br>風格：' + (details.styleLabels || []).join('、') + '<br>構圖要素：' + (details.elementLabels || []).join('、') + '<br>說明屬性：' + (details.attrLabels || []).join('、') + '</div>';
+  }
+  
+  contentDiv.innerHTML = detailsHtml + '<div style="margin-top:12px;font-size:1.05em;line-height:1.8;white-space:pre-wrap;">' + promptText + '</div>';
+  messageDiv.appendChild(contentDiv);
+  
+  const buttonContainer = document.createElement('div');
+  buttonContainer.style = 'position:absolute; bottom:8px; left:12px; right:50px; display:flex; gap:8px; flex-wrap:wrap;';
+  
+  const newSelBtn = document.createElement('button');
+  newSelBtn.className = 'btn btn-back';
+  newSelBtn.innerText = '重新選擇';
+  newSelBtn.style = 'font-size:0.85em; padding:6px 14px; margin:0;';
+  newSelBtn.onclick = function() { goToStep(1); };
+  buttonContainer.appendChild(newSelBtn);
+  
+  const copyBtn = document.createElement('button');
+  copyBtn.className = 'btn btn-back';
+  copyBtn.innerHTML = '📋 複製';
+  copyBtn.style = 'font-size:0.85em; padding:6px 14px; margin:0;';
+  copyBtn.onclick = function() {
+    copyToClipboard(promptText);
+    copyBtn.innerHTML = '✓ 已複製';
+    setTimeout(function() { copyBtn.innerHTML = '📋 複製'; }, 2000);
+  };
+  buttonContainer.appendChild(copyBtn);
+  
+  messageDiv.appendChild(buttonContainer);
+  
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'save-btn';
+  saveBtn.innerHTML = '❤';
+  saveBtn.title = '收藏此設計提示';
+  saveBtn.onclick = function() {
+    saveToFavorites(promptText, details);
+    saveBtn.innerHTML = '❤';
+    saveBtn.classList.add('saved');
+    saveBtn.disabled = true;
+    saveBtn.title = '已收藏';
+  };
+  messageDiv.appendChild(saveBtn);
+  
+  container.appendChild(messageDiv);
+  container.scrollTop = container.scrollHeight;
+  generatedPrompts.push(promptText);
+}
+
+function showTypingIndicator() {
+  document.getElementById('typing-indicator').classList.add('active');
+}
+
+function hideTypingIndicator() {
+  document.getElementById('typing-indicator').classList.remove('active');
+}
+
+function saveToFavorites(prompt, details) {
+  let favorites = [];
+  try {
+    favorites = window.favoritesList || [];
+  } catch (e) {
+    favorites = window.favoritesList || [];
+  }
+  if (!favorites.some(function(it) { return it.prompt === prompt; })) {
+    favorites.push({ prompt: prompt, details: details });
+    window.favoritesList = favorites;
+  }
+}
+
+function loadFavorites() {
+  try {
+    window.favoritesList = window.favoritesList || [];
+  } catch (e) {
+    window.favoritesList = [];
+  }
+}
+
+function showFavorites() {
+  updateFavoritesList();
+  document.getElementById('favorites-modal').classList.add('active');
+}
+
+function closeFavorites() {
+  document.getElementById('favorites-modal').classList.remove('active');
+}
+
+function closeModalOnOutside(event) {
+  if (event.target.id === 'favorites-modal') closeFavorites();
+}
+
+function updateFavoritesList() {
+  const listContainer = document.getElementById('favorites-list');
+  const favorites = window.favoritesList || [];
+  if (favorites.length === 0) {
+    listContainer.innerHTML = '<div class="empty-state">暫無收藏的設計提示</div>';
+    return;
+  }
+  listContainer.innerHTML = favorites.map(function(item, idx) {
+    return '<div class="favorite-item"><div class="favorite-item-content">' + item.prompt + '</div><div class="favorite-actions"><button class="favorite-action-btn" onclick="copyFavorite(' + idx + ')" title="複製">📋</button><button class="favorite-action-btn remove" onclick="removeFavorite(' + idx + ')" title="移除">✕</button></div></div>';
+  }).join('');
+  
+  const btnContainer = document.createElement('div');
+  btnContainer.style = 'margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap;';
+  
+  const clearBtn = document.createElement('button');
+  clearBtn.innerText = '🗑 一鍵清除';
+  clearBtn.className = 'btn btn-back';
+  clearBtn.style = 'margin: 0; padding: 10px 18px; font-size: 0.95rem;';
+  clearBtn.onclick = function() {
+    if (confirm('確定要清除全部收藏嗎?')) {
+      window.favoritesList = [];
+      updateFavoritesList();
+    }
+  };
+  btnContainer.appendChild(clearBtn);
+  
+  const homeBtn = document.createElement('button');
+  homeBtn.innerText = '回主頁';
+  homeBtn.className = 'btn btn-next';
+  homeBtn.style = 'margin: 0; padding: 10px 18px; font-size: 0.95rem;';
+  homeBtn.onclick = function() { closeFavorites(); goToStep(1); };
+  btnContainer.appendChild(homeBtn);
+  
+  listContainer.appendChild(btnContainer);
+}
+
+function copyFavorite(idx) {
+  const favorites = window.favoritesList || [];
+  if (favorites[idx]) {
+    copyToClipboard(favorites[idx].prompt);
+    const btn = event.target;
+    const origText = btn.innerHTML;
+    btn.innerHTML = '✓';
+    btn.style.background = '#d4af37';
+    btn.style.color = 'white';
+    setTimeout(function() {
+      btn.innerHTML = origText;
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 1500);
+  }
+}
+
+function copyToClipboard(text) {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand('copy');
+  } catch (err) {
+    console.error('Copy failed:', err);
+  }
+  document.body.removeChild(textarea);
+}
+
+function removeFavorite(idx) {
+  const favorites = window.favoritesList || [];
+  favorites.splice(idx, 1);
+  window.favoritesList = favorites;
+  updateFavoritesList();
+}
+
+window.onload = initializeApp;
+    </script>
+</body>
+</html>
