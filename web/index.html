@@ -319,8 +319,8 @@
         <div class="tab-bar" id="tabBar">
         <!-- TLK按鈕直接放外部連結 -->
         <button class="tab-btn active" type="button" data-src="https://tlk.io/pcb" data-name="TLK">TLK</button>
-        <button class="tab-btn " type="button" data-src="飛書.html" data-name="飛書">飛書</button>
-        <button class="tab-btn " type="button" data-src="測試.html" data-name="測試">測試</button>
+        <button class="tab-btn " type="button" data-src="https://tcn7suhgzdxm.feishu.cn/drive/home/" data-name="飛書">飛書</button>
+        <button class="tab-btn " type="button" data-src="https://fam3000.github.io/op/good/網域.html" data-name="測試">測試</button>
       </div>
       </div>
     </header>
@@ -328,7 +328,7 @@
     <main class="main-area">
       <div class="iframe-wrap">
         <div class="loading-tip" id="loadingTip">載入中...</div>
-        <iframe id="toolFrame" class="tool-frame" title="工具內容" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-downloads" src="飛書.html"></iframe>
+        <iframe id="toolFrame" class="tool-frame" title="工具內容" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-downloads" src=""></iframe>
       </div>
     </main>
   </div>
@@ -358,11 +358,9 @@
 模板2
 模板3
 模板4
-模板5">模板1
-模板2
-模板3
-模板4
-模板5</textarea>
+模板5">TLK
+飛書
+測試</textarea>
           <div class="hint">
             每行一個，或用逗號分隔。按鈕名稱會自動轉成對應檔名。
           </div>
@@ -383,8 +381,8 @@
       iconFile: 'template-icon.png',
       tools: [
         { name: 'TLK', src: 'https://tlk.io/pcb' },
-        { name: '飛書', src: '飛書.html' },
-        { name: '測試', src: '測試.html' }
+        { name: '飛書', src: 'https://tcn7suhgzdxm.feishu.cn/drive/home/' },
+        { name: '測試', src: 'https://fam3000.github.io/op/good/網域.html' }
       ]
     };
 
@@ -393,8 +391,6 @@
     const loadingTip = document.getElementById('loadingTip');
     const appLogo = document.getElementById('appLogo');
     const modalMask = document.getElementById('modalMask');
-    const openSettingsBtn = document.getElementById('openSettingsBtn');
-    const copyHtmlBtn = document.getElementById('copyHtmlBtn');
     const cancelBtn = document.getElementById('cancelBtn');
     const applyBtn = document.getElementById('applyBtn');
     const logoInput = document.getElementById('logoInput');
@@ -465,12 +461,6 @@
 
     function getCleanHtml() {
       const clone = document.documentElement.cloneNode(true);
-
-      clone.querySelector('.setting-btn')?.remove();
-      clone.querySelector('.copy-btn')?.remove();
-      clone.querySelector('#openSettingsBtn')?.remove();
-      clone.querySelector('#copyHtmlBtn')?.remove();
-
       return clone.innerHTML;
     }
 
@@ -499,9 +489,9 @@
         >${tool.name}</button>
       `).join('');
 
-      // 只載入第一個本地html，外部網址不預載iframe
-      const firstLocal = tools.find(item => !/^https?:\/\//.test(item.src));
-      if (firstLocal) loadTool(firstLocal.src);
+      // 全部都是外部連結，不預載iframe內容
+      currentSrc = '';
+      toolFrame.src = '';
     }
 
     function setActiveButton(src) {
@@ -518,7 +508,7 @@
     function loadTool(src) {
       if (!src || src === currentSrc) return;
 
-      // 判斷 https 外部連結
+      // 判斷 https 外部連結 → 新分頁打開
       if (/^https?:\/\//.test(src)) {
         window.open(src, '_blank');
         return;
@@ -542,25 +532,7 @@
     });
 
     appLogo.addEventListener('click', () => {
-      openSettingsBtn.click();
-    });
-
-    openSettingsBtn.addEventListener('click', () => {
-      logoInput.value = appLogo.textContent.trim() || APP_CONFIG.logoText;
-      titleInput.value = document.title || APP_CONFIG.appTitle;
-      iconInput.value = document.querySelector('link[rel="icon"]')?.getAttribute('href') || APP_CONFIG.iconFile;
-      tabsInput.value = tools.map(t => t.name).join('\n');
       modalMask.classList.add('show');
-    });
-
-    copyHtmlBtn.addEventListener('click', async () => {
-      updateMetaAndTitle();
-
-      const cleanHtml = getCleanHtml();
-      const ok = await copyText(cleanHtml);
-
-      copyHtmlBtn.textContent = ok ? '已複製' : '失敗';
-      setTimeout(() => copyHtmlBtn.textContent = '複製', 1200);
     });
 
     cancelBtn.addEventListener('click', () => {
@@ -582,11 +554,6 @@
       if (iconFile) {
         document.querySelector('link[rel="icon"]').setAttribute('href', iconFile);
         document.querySelector('link[rel="apple-touch-icon"]').setAttribute('href', iconFile);
-      }
-
-      if (names.length) {
-        tools = buildToolsFromNames(names);
-        renderTabs();
       }
 
       updateMetaAndTitle();
