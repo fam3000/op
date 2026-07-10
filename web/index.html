@@ -1,12 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#495057">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="TLK.io">
-  <link rel="icon" type="image/png" sizes="192x192" href="tlk-icon.png">
-  <link rel="apple-touch-icon" href="tlk-icon.png">
-  <title>TLK.io</title>
+<meta charset="UTF-8" />
+<!-- 行動裝置滿版渲染、禁止雙擊縮放、適配螢幕圓角安全區 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<!-- 瀏覽器頂部主題色（加入桌面捷徑必備），依照頁面背景色替換色值 -->
+<meta name="theme-color" content="#495057">
+
+<!-- iOS 加入主畫面捷徑專用配置 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!-- 桌面捷徑自訂顯示名稱 -->
+<meta name="apple-mobile-web-app-title" content="web">
+
+<!-- Android 桌面捷徑開啟全螢幕模式 -->
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- Android 桌面捷徑圖標 -->
+<link rel="icon" type="image/png" sizes="192x192" href="web.icon.png">
+<!-- iOS 加入主畫面專用圖標 -->
+<link rel="apple-touch-icon" href="web.icon.png">
+
+<title>web</title>
 
   <style>
     :root {
@@ -24,6 +39,28 @@
       --trans: 0.2s ease;
     }
 
+    /* 新增全域安全區規則 */
+    html, body {
+      width: 100%;
+      height: 100dvh;
+      min-height: 100dvh;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      background: var(--color-bg);
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    /* 滿版容器專用樣式 */
+    .full-screen {
+      position: fixed;
+      inset: 0;
+      top: env(safe-area-inset-top);
+      left: env(safe-area-inset-left);
+      right: env(safe-area-inset-right);
+      bottom: env(safe-area-inset-bottom);
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -31,14 +68,7 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
-
     body {
-      background: var(--color-bg);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
       color: var(--color-main);
       font-size: 14px;
@@ -73,9 +103,9 @@
       flex-shrink: 0;
       animation: bounce 1s infinite alternate;
       user-select: none;
-      cursor: pointer;
       padding: 2px 4px;
       border-radius: 6px;
+      cursor: default;
     }
 
     .app-logo:active {
@@ -196,103 +226,6 @@
       transform: translateY(0);
     }
 
-    .modal-mask {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.35);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 99;
-      padding: 16px;
-    }
-
-    .modal-mask.show {
-      display: flex;
-    }
-
-    .modal {
-      width: min(720px, 100%);
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
-      overflow: hidden;
-    }
-
-    .modal-head {
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--color-light);
-      font-weight: 700;
-      color: var(--color-main);
-    }
-
-    .modal-body {
-      padding: 16px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .field-label {
-      font-size: 13px;
-      color: #6c757d;
-      margin-bottom: 6px;
-    }
-
-    .modal-body input,
-    .modal-body textarea {
-      width: 100%;
-      border: 1px solid var(--color-border);
-      border-radius: 10px;
-      padding: 12px;
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--color-main);
-      outline: none;
-      background: #fff;
-    }
-
-    .modal-body input:focus,
-    .modal-body textarea:focus {
-      border-color: var(--color-gray);
-    }
-
-    .modal-body textarea {
-      min-height: 150px;
-      resize: vertical;
-    }
-
-    .hint {
-      font-size: 12px;
-      color: #6c757d;
-      line-height: 1.5;
-    }
-
-    .modal-foot {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-      padding: 14px 16px;
-      border-top: 1px solid var(--color-light);
-    }
-
-    .modal-foot button {
-      border: none;
-      border-radius: 10px;
-      padding: 10px 14px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .btn-primary {
-      background: var(--color-main);
-      color: #fff;
-    }
-
-    .btn-ghost {
-      background: var(--color-light);
-      color: var(--color-main);
-    }
-
     @media (max-width: 640px) {
       .app-logo {
         font-size: 1.35rem;
@@ -313,14 +246,13 @@
 <body>
   <div class="app-shell">
     <header class="app-header">
-      <div id="appLogo" class="app-logo">常用</div>
+      <div id="appLogo" class="app-logo">web</div>
 
       <div class="tab-scroll-wrap">
         <div class="tab-bar" id="tabBar">
-        <!-- TLK按鈕直接放外部連結 -->
         <button class="tab-btn active" type="button" data-src="https://tlk.io/pcb" data-name="TLK">TLK</button>
         <button class="tab-btn " type="button" data-src="https://tcn7suhgzdxm.feishu.cn/drive/home/" data-name="飛書">飛書</button>
-        <button class="tab-btn " type="button" data-src="https://fam3000.github.io/op/good/網域.html" data-name="測試">測試</button>
+        <button class="tab-btn " type="button" data-src="https://fam3000.github.io/op/good/網域.html" data-name="網域">網域</button>
       </div>
       </div>
     </header>
@@ -333,56 +265,16 @@
     </main>
   </div>
 
-  <div class="modal-mask" id="modalMask">
-    <div class="modal">
-      <div class="modal-head">模板設定</div>
-      <div class="modal-body">
-        <div>
-          <div class="field-label">左上角跳動文字</div>
-          <input id="logoInput" type="text" value="模板">
-        </div>
-
-        <div>
-          <div class="field-label">網頁標題 / 主畫面名稱</div>
-          <input id="titleInput" type="text" value="模板">
-        </div>
-
-        <div>
-          <div class="field-label">icon 檔名</div>
-          <input id="iconInput" type="text" value="template-icon.png">
-        </div>
-
-        <div>
-          <div class="field-label">批量按鈕清單</div>
-          <textarea id="tabsInput" placeholder="模板1
-模板2
-模板3
-模板4
-模板5">TLK
-飛書
-測試</textarea>
-          <div class="hint">
-            每行一個，或用逗號分隔。按鈕名稱會自動轉成對應檔名。
-          </div>
-        </div>
-      </div>
-      <div class="modal-foot">
-        <button class="btn-ghost" id="cancelBtn" type="button">取消</button>
-        <button class="btn-primary" id="applyBtn" type="button">套用</button>
-      </div>
-    </div>
-  </div>
-
 <script>
     const APP_CONFIG = {
-      logoText: '模板',
-      appTitle: '模板',
-      homeTitle: '模板',
-      iconFile: 'template-icon.png',
+      logoText: 'web',
+      appTitle: 'web',
+      homeTitle: 'web',
+      iconFile: 'web.icon.png',
       tools: [
         { name: 'TLK', src: 'https://tlk.io/pcb' },
         { name: '飛書', src: 'https://tcn7suhgzdxm.feishu.cn/drive/home/' },
-        { name: '測試', src: 'https://fam3000.github.io/op/good/網域.html' }
+        { name: '網域', src: 'https://fam3000.github.io/op/good/網域.html' }
       ]
     };
 
@@ -390,13 +282,6 @@
     const toolFrame = document.getElementById('toolFrame');
     const loadingTip = document.getElementById('loadingTip');
     const appLogo = document.getElementById('appLogo');
-    const modalMask = document.getElementById('modalMask');
-    const cancelBtn = document.getElementById('cancelBtn');
-    const applyBtn = document.getElementById('applyBtn');
-    const logoInput = document.getElementById('logoInput');
-    const titleInput = document.getElementById('titleInput');
-    const iconInput = document.getElementById('iconInput');
-    const tabsInput = document.getElementById('tabsInput');
 
     let tools = [...APP_CONFIG.tools];
     let currentSrc = '';
@@ -465,9 +350,8 @@
     }
 
     function updateMetaAndTitle() {
-      const logoText = logoInput.value.trim() || APP_CONFIG.logoText;
-      const pageTitle = titleInput.value.trim() || logoText;
-      const iconFile = iconInput.value.trim() || APP_CONFIG.iconFile;
+      const pageTitle = APP_CONFIG.appTitle;
+      const iconFile = APP_CONFIG.iconFile;
 
       document.title = pageTitle;
       document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', pageTitle);
@@ -489,7 +373,6 @@
         >${tool.name}</button>
       `).join('');
 
-      // 全部都是外部連結，不預載iframe內容
       currentSrc = '';
       toolFrame.src = '';
     }
@@ -504,17 +387,14 @@
       loadingTip.classList.toggle('show', show);
     }
 
-    // 重寫核心判斷函式：偵測外部網址開新分頁
     function loadTool(src) {
       if (!src || src === currentSrc) return;
 
-      // 判斷 https 外部連結 → 新分頁打開
       if (/^https?:\/\//.test(src)) {
         window.open(src, '_blank');
         return;
       }
 
-      // 本地html走iframe
       currentSrc = src;
       showLoading(true);
       toolFrame.src = src;
@@ -531,35 +411,6 @@
       showLoading(false);
     });
 
-    appLogo.addEventListener('click', () => {
-      modalMask.classList.add('show');
-    });
-
-    cancelBtn.addEventListener('click', () => {
-      modalMask.classList.remove('show');
-    });
-
-    modalMask.addEventListener('click', (e) => {
-      if (e.target === modalMask) modalMask.classList.remove('show');
-    });
-
-    applyBtn.addEventListener('click', () => {
-      const logoText = logoInput.value.trim();
-      const pageTitle = titleInput.value.trim();
-      const iconFile = iconInput.value.trim();
-      const names = parseNames(tabsInput.value);
-
-      if (logoText) appLogo.textContent = logoText;
-      if (pageTitle) document.title = pageTitle;
-      if (iconFile) {
-        document.querySelector('link[rel="icon"]').setAttribute('href', iconFile);
-        document.querySelector('link[rel="apple-touch-icon"]').setAttribute('href', iconFile);
-      }
-
-      updateMetaAndTitle();
-      modalMask.classList.remove('show');
-    });
-
     appLogo.textContent = APP_CONFIG.logoText;
     document.title = APP_CONFIG.appTitle;
     document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', APP_CONFIG.homeTitle);
@@ -570,3 +421,4 @@
 </script>
 
 </body>
+</html>
