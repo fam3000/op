@@ -1,28 +1,12 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
 <head>
-<meta charset="UTF-8" />
-<!-- 行動裝置滿版渲染、禁止雙擊縮放、適配螢幕圓角安全區 -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<!-- 瀏覽器頂部主題色（加入桌面捷徑必備），依照頁面背景色替換色值 -->
-<meta name="theme-color" content="#495057">
-
-<!-- iOS 加入主畫面捷徑專用配置 -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<!-- 桌面捷徑自訂顯示名稱 -->
-<meta name="apple-mobile-web-app-title" content="web">
-
-<!-- Android 桌面捷徑開啟全螢幕模式 -->
-<meta name="mobile-web-app-capable" content="yes">
-
-<!-- Android 桌面捷徑圖標 -->
-<link rel="icon" type="image/png" sizes="192x192" href="web.icon.png">
-<!-- iOS 加入主畫面專用圖標 -->
-<link rel="apple-touch-icon" href="web.icon.png">
-
-<title>web</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#495057">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="web">
+  <link rel="icon" type="image/png" sizes="192x192" href="wistron-pcb-icon.png">
+  <link rel="apple-touch-icon" href="wistron-pcb-icon.png">
+  <title>web</title>
   <style>
     :root {
       --color-main: #495057;
@@ -39,28 +23,6 @@
       --trans: 0.2s ease;
     }
 
-    /* 新增全域安全區規則 */
-    html, body {
-      width: 100%;
-      height: 100dvh;
-      min-height: 100dvh;
-      overflow: hidden;
-      user-select: none;
-      -webkit-user-select: none;
-      background: var(--color-bg);
-      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-    }
-
-    /* 滿版容器專用樣式 */
-    .full-screen {
-      position: fixed;
-      inset: 0;
-      top: env(safe-area-inset-top);
-      left: env(safe-area-inset-left);
-      right: env(safe-area-inset-right);
-      bottom: env(safe-area-inset-bottom);
-    }
-
     * {
       margin: 0;
       padding: 0;
@@ -68,7 +30,14 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
     body {
+      background: var(--color-bg);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
       color: var(--color-main);
       font-size: 14px;
@@ -93,8 +62,14 @@
       flex-shrink: 0;
       box-shadow: 0 1px 4px var(--color-shadow);
       z-index: 10;
+      position: relative;
     }
 
+    /* 左側下拉容器 */
+    .logo-dropdown-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
     .app-logo {
       font-size: 1.55rem;
       font-weight: 700;
@@ -103,18 +78,54 @@
       flex-shrink: 0;
       animation: bounce 1s infinite alternate;
       user-select: none;
-      padding: 2px 4px;
-      border-radius: 6px;
-      cursor: default;
+      padding: 6px 10px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background-color var(--trans);
     }
-
     .app-logo:active {
       transform: scale(0.98);
+      background-color: var(--color-light);
     }
 
     @keyframes bounce {
       0% { transform: translateY(0); }
       100% { transform: translateY(-4px); }
+    }
+
+    /* 下拉選單樣式統一UI */
+    .logo-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      min-width: 140px;
+      background: var(--color-white);
+      border-radius: var(--radius);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+      overflow: hidden;
+      z-index: 99;
+      border: 1px solid var(--color-light);
+    }
+    .logo-dropdown-wrap.show .logo-dropdown-menu {
+      display: block;
+    }
+    .logo-dropdown-item {
+      width: 100%;
+      padding: 11px 14px;
+      border: none;
+      background: transparent;
+      text-align: left;
+      font-size: 14px;
+      color: var(--color-main);
+      cursor: pointer;
+      transition: background-color var(--trans);
+    }
+    .logo-dropdown-item + .logo-dropdown-item {
+      border-top: 1px solid #f1f3f5;
+    }
+    .logo-dropdown-item:active {
+      background: var(--color-light);
     }
 
     .tab-scroll-wrap {
@@ -163,6 +174,12 @@
       color: var(--color-white);
     }
 
+    /* 右側按鈕 */
+    .header-actions {
+      display: flex;
+      gap: var(--gap);
+      flex-shrink: 0;
+    }
     .setting-btn, .copy-btn {
       height: var(--btn-h);
       min-width: 54px;
@@ -177,7 +194,6 @@
       transition: all var(--trans);
       flex-shrink: 0;
     }
-
     .setting-btn:active, .copy-btn:active {
       transform: scale(0.98);
     }
@@ -226,6 +242,98 @@
       transform: translateY(0);
     }
 
+    /* 設定彈窗結構：標題+底部固定，中間滾動 */
+    .modal-mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 99;
+      padding: 16px;
+    }
+    .modal-mask.show {
+      display: flex;
+    }
+    .modal {
+      width: min(720px, 100%);
+      max-height: 85vh;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-head {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--color-light);
+      font-weight: 700;
+      color: var(--color-main);
+      flex-shrink: 0;
+    }
+    .modal-body {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .field-label {
+      font-size: 13px;
+      color: #6c757d;
+      margin-bottom: 6px;
+    }
+    .modal-body input,
+    .modal-body textarea {
+      width: 100%;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--color-main);
+      outline: none;
+      background: #fff;
+    }
+    .modal-body input:focus,
+    .modal-body textarea:focus {
+      border-color: var(--color-gray);
+    }
+    .modal-body textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+    .hint {
+      font-size: 12px;
+      color: #6c757d;
+      line-height: 1.5;
+    }
+    .modal-foot {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      padding: 14px 16px;
+      border-top: 1px solid var(--color-light);
+      flex-shrink: 0;
+    }
+    .modal-foot button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .btn-primary {
+      background: var(--color-main);
+      color: #fff;
+    }
+    .btn-ghost {
+      background: var(--color-light);
+      color: var(--color-main);
+    }
+
     @media (max-width: 640px) {
       .app-logo {
         font-size: 1.35rem;
@@ -236,49 +344,64 @@
         padding: 0 12px;
         font-size: 12px;
       }
-
-      .setting-btn, .copy-btn {
-        min-width: 48px;
-      }
     }
   </style>
 </head>
 <body>
   <div class="app-shell">
     <header class="app-header">
-      <div id="appLogo" class="app-logo">web</div>
+      <!-- 左側下拉標題 -->
+      <div class="app-logo" id="appLogo">web</div>
 
       <div class="tab-scroll-wrap">
         <div class="tab-bar" id="tabBar">
         <button class="tab-btn active" type="button" data-src="https://tlk.io/pcb" data-name="TLK">TLK</button>
+      
         <button class="tab-btn " type="button" data-src="https://tcn7suhgzdxm.feishu.cn/drive/home/" data-name="飛書">飛書</button>
-        <button class="tab-btn " type="button" data-src="https://fam3000.github.io/op/good/網域.html" data-name="網域">網域</button>
-        <!-- 新增文檔按鈕 -->
+      
+        <button class="tab-btn " type="button" data-src="https://fam3000.github.io/op/good/%E7%B6%B2%E5%9F%9F.html" data-name="網域">網域</button>
+      
         <button class="tab-btn " type="button" data-src="https://sdocapp.com/recent" data-name="文檔">文檔</button>
       </div>
+      </div>
+
+      <!-- 右側按鈕群 -->
+      <div class="header-actions">
+        
+        
       </div>
     </header>
 
     <main class="main-area">
       <div class="iframe-wrap">
         <div class="loading-tip" id="loadingTip">載入中...</div>
-        <iframe id="toolFrame" class="tool-frame" title="工具內容" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-downloads" src=""></iframe>
+
+        <iframe id="toolFrame" class="tool-frame" title="工具內容" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-downloads" src="template1.html"></iframe>
       </div>
     </main>
   </div>
 
-<script>
+  <!-- 設定彈窗 -->
+  
+
+  <script>
     const APP_CONFIG = {
-      logoText: 'web',
-      appTitle: 'web',
-      homeTitle: 'web',
-      iconFile: 'web.icon.png',
+      logoText: '模板',
+      appTitle: '模板',
+      homeTitle: '模板',
+      iconFile: 'wistron-pcb-icon.png',
+      gapValue: 8,
+      : [
+        { name: '模板1', src: 'template1.html' },
+        { name: '模板2', src: 'template2.html' },
+        { name: '模板3', src: 'template3.html' }
+      ],
       tools: [
-        { name: 'TLK', src: 'https://tlk.io/pcb' },
-        { name: '飛書', src: 'https://tcn7suhgzdxm.feishu.cn/drive/home/' },
-        { name: '網域', src: 'https://fam3000.github.io/op/good/網域.html' },
-        // 新增文檔配置
-        { name: '文檔', src: 'https://sdocapp.com/recent' }
+        { name: '模板1', src: 'template1.html' },
+        { name: '模板2', src: 'template2.html' },
+        { name: '模板3', src: 'template3.html' },
+        { name: '模板4', src: 'template4.html' },
+        { name: '模板5', src: 'template5.html' }
       ]
     };
 
@@ -286,34 +409,68 @@
     const toolFrame = document.getElementById('toolFrame');
     const loadingTip = document.getElementById('loadingTip');
     const appLogo = document.getElementById('appLogo');
+    const logoDropdownWrap = document.getElementById('logoDropdownWrap');
+    const logoMenu = document.getElementById('logoMenu');
+    const modalMask = document.getElementById('modalMask');
+    const openSettingsBtn = document.getElementById('openSettingsBtn');
+    const copyHtmlBtn = document.getElementById('copyHtmlBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const applyBtn = document.getElementById('applyBtn');
+    const  = document.getElementById('');
+    const  = document.getElementById('');
+    const  = document.getElementById('');
+    const  = document.getElementById('');
+    const  = document.getElementById('');
+    const  = document.getElementById('');
 
     let tools = [...APP_CONFIG.tools];
+    let logoMenuData = [...APP_CONFIG.];
     let currentSrc = '';
+    let longPressTimer = null;
+    let isLongPressed = false;
 
+    // 名稱轉安全檔名
     function slugify(name) {
       return name.trim().toLowerCase()
         .replace(/\s+/g, '-')
         .replace(/[^\w\u4e00-\u9fff-]/g, '');
     }
 
-    function parseNames(text) {
-      return text
-        .split(/[\n,，]+/)
-        .map(s => s.trim())
-        .filter(Boolean);
-    }
-
-    function buildToolsFromNames(names) {
-      const seen = new Map();
-      return names.map((name, index) => {
-        const base = slugify(name) || `tool-${index + 1}`;
-        const count = seen.get(base) || 0;
-        seen.set(base, count + 1);
-        const safe = count === 0 ? base : `${base}-${count + 1}`;
-        return { name, src: `${safe}.html` };
+    // 空格分隔解析器
+    function parseListText(text) {
+      const lines = text.split('\n').map(item => item.trim()).filter(Boolean);
+      const res = [];
+      lines.forEach(line => {
+        const parts = line.split(/\s+/);
+        if (parts.length === 1) {
+          const name = parts[0].trim();
+          if (!name) return;
+          const fileName = slugify(name) + '.html';
+          res.push({ name, src: fileName });
+        } else {
+          const name = parts[0].trim();
+          const src = parts.slice(1).join(' ').trim();
+          if (name && src) res.push({ name, src });
+        }
       });
+      return res;
     }
 
+    // 渲染左側下拉選單
+    function () {
+      logoMenu.innerHTML = logoMenuData.map(item => `
+        <button class="logo-dropdown-item" data-src="${item.src}">${item.name}</button>
+      `).join('');
+      logoMenu.querySelectorAll('.logo-dropdown-item').forEach(btn => {
+        btn.onclick = () => {
+          const src = btn.dataset.src;
+          loadTool(src);
+          logoDropdownWrap.classList.remove('show');
+        }
+      })
+    }
+
+    // 複製成品HTML
     function copyText(text) {
       return new Promise((resolve) => {
         try {
@@ -348,25 +505,50 @@
       });
     }
 
+    // 匯出乾淨成品（移除設定與下拉相關程式）
     function getCleanHtml() {
       const clone = document.documentElement.cloneNode(true);
+      clone.querySelector('.setting-btn')?.remove();
+      clone.querySelector('.copy-btn')?.remove();
+      clone.querySelector('#openSettingsBtn')?.remove();
+      clone.querySelector('#copyHtmlBtn')?.remove();
+      clone.querySelector('.modal-mask')?.remove();
+      clone.querySelector('.logo-dropdown-wrap')?.replaceWith(clone.querySelector('.app-logo'));
+
+      let scriptDom = clone.querySelector('script');
+      if (scriptDom) {
+        let scriptTxt = scriptDom.textContent;
+        scriptTxt = scriptTxt
+          .replace(/logoDropdownWrap[\s\S]*?logoMenu\.classList/g, '')
+          .replace(/||/g, '')
+          .replace(/openSettingsBtn[\s\S]*?modalMask\.classList\.remove\("show"\);/g, '')
+          .replace(/copyHtmlBtn[\s\S]*?setTimeout\(\(\)=> copyHtmlBtn\.textContent = '複製', 1200\);/g, '')
+          .replace(/cancelBtn\.addEventListener[\s\S]*?modalMask\.classList\.remove\("show"\);/g, '')
+          .replace(/modalMask\.addEventListener[\s\S]*?modalMask\.classList\.remove\("show"\);/g, '')
+          .replace(/applyBtn\.addEventListener[\s\S]*?modalMask\.classList\.remove\("show"\);/g, '')
+          .replace(/||||/g, '');
+        scriptDom.textContent = scriptTxt;
+      }
       return clone.innerHTML;
     }
 
     function updateMetaAndTitle() {
-      const pageTitle = APP_CONFIG.appTitle;
-      const iconFile = APP_CONFIG.iconFile;
-
+      const pageTitle = .value.trim() || APP_CONFIG.appTitle;
+      const iconFile = .value.trim() || APP_CONFIG.iconFile;
       document.title = pageTitle;
       document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', pageTitle);
-
       let favicon = document.querySelector('link[rel="icon"]');
       if (favicon) favicon.setAttribute('href', iconFile);
-
       let appleTouch = document.querySelector('link[rel="apple-touch-icon"]');
       if (appleTouch) appleTouch.setAttribute('href', iconFile);
     }
 
+    function updateGapValue(value) {
+      const gapNum = parseInt(value, 10) || 8;
+      document.documentElement.style.setProperty('--gap', gapNum + 'px');
+    }
+
+    // 渲染頂部分頁按鈕
     function renderTabs() {
       tabBar.innerHTML = tools.map((tool, index) => `
         <button
@@ -376,9 +558,7 @@
           data-name="${tool.name}"
         >${tool.name}</button>
       `).join('');
-
-      currentSrc = '';
-      toolFrame.src = '';
+      if (tools.length > 0) loadTool(tools[0].src);
     }
 
     function setActiveButton(src) {
@@ -393,36 +573,126 @@
 
     function loadTool(src) {
       if (!src || src === currentSrc) return;
-
       if (/^https?:\/\//.test(src)) {
         window.open(src, '_blank');
         return;
       }
-
       currentSrc = src;
       showLoading(true);
       toolFrame.src = src;
       setActiveButton(src);
     }
 
+    // 關閉所有下拉
+    function closeAllDropdowns() {
+      logoDropdownWrap.classList.remove('show');
+      isLongPressed = false;
+    }
+
+    // 左側標題點擊下拉
+    appLogo.addEventListener('click', (e) => {
+      e.stopPropagation();
+      logoDropdownWrap.classList.toggle('show');
+    })
+
+    // 點擊空白關閉下拉
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.logo-dropdown-wrap')) {
+        logoDropdownWrap.classList.remove('show');
+      }
+    })
+
+    // 分頁點擊切換
     tabBar.addEventListener('click', (e) => {
       const btn = e.target.closest('.tab-btn');
       if (!btn) return;
       loadTool(btn.dataset.src);
     });
 
+    // iframe載入完成關閉loading
     toolFrame.addEventListener('load', () => {
       showLoading(false);
     });
 
+    // 打開設定面板回填資料
+    openSettingsBtn.addEventListener('click', () => {
+      .value = appLogo.textContent.trim() || APP_CONFIG.logoText;
+      .value = document.title || APP_CONFIG.appTitle;
+      .value = document.querySelector('link[rel="icon"]')?.getAttribute('href') || APP_CONFIG.iconFile;
+      .value = document.documentElement.style.getPropertyValue('--gap') || APP_CONFIG.gapValue;
+
+      const logoSaveText = logoMenuData.map(t => {
+        if (t.src === slugify(t.name) + '.html') return t.name;
+        else return `${t.name} ${t.src}`;
+      }).join('\n');
+      .value = logoSaveText;
+
+      const saveList = tools.map(t => {
+        if (t.src === slugify(t.name) + '.html') return t.name;
+        else return `${t.name} ${t.src}`;
+      }).join('\n');
+      .value = saveList;
+      modalMask.classList.add('show');
+    });
+
+    // 複製成品按鈕
+    copyHtmlBtn.addEventListener('click', async () => {
+      updateMetaAndTitle();
+      closeAllDropdowns();
+      const cleanHtml = getCleanHtml();
+      const ok = await copyText(cleanHtml);
+      copyHtmlBtn.textContent = ok ? '已複製' : '失敗';
+      setTimeout(() => copyHtmlBtn.textContent = '複製', 1200);
+    });
+
+    // 取消設定
+    cancelBtn.addEventListener('click', () => {
+      modalMask.classList.remove('show');
+    });
+
+    // 點遮罩外層關閉
+    modalMask.addEventListener('click', (e) => {
+      if (e.target === modalMask) modalMask.classList.remove('show');
+    });
+
+    // 套用設定
+    applyBtn.addEventListener('click', () => {
+      const logoText = .value.trim();
+      const pageTitle = .value.trim();
+      const iconFile = .value.trim();
+      const gapVal = .value.trim();
+      const logoMenuText = .value;
+      const toolText = .value;
+
+      if (logoText) appLogo.textContent = logoText;
+      if (pageTitle) document.title = pageTitle;
+      if (iconFile) {
+        document.querySelector('link[rel="icon"]').setAttribute('href', iconFile);
+        document.querySelector('link[rel="apple-touch-icon"]').setAttribute('href', iconFile);
+      }
+      if (gapVal) updateGapValue(gapVal);
+
+      logoMenuData = parseListText(logoMenuText);
+      ();
+
+      const newTools = parseListText(toolText);
+      if (newTools.length) {
+        tools = newTools;
+        renderTabs();
+      }
+      updateMetaAndTitle();
+      modalMask.classList.remove('show');
+    });
+
+    // 初始化執行
     appLogo.textContent = APP_CONFIG.logoText;
     document.title = APP_CONFIG.appTitle;
     document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', APP_CONFIG.homeTitle);
     document.querySelector('link[rel="icon"]').setAttribute('href', APP_CONFIG.iconFile);
     document.querySelector('link[rel="apple-touch-icon"]').setAttribute('href', APP_CONFIG.iconFile);
-
+    updateGapValue(APP_CONFIG.gapValue);
+    ();
     renderTabs();
-</script>
+  </script>
 
 </body>
-</html>
