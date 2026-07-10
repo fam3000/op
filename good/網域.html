@@ -2,6 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>GitHub Pages 連結生成器</title>
 <style>
 *{
@@ -10,82 +11,85 @@
     padding: 0;
 }
 body{
-    font-family: Arial;
+    font-family: -apple-system, Arial, sans-serif;
     background:#111;
     color:#fff;
-    padding: 20px;
+    padding: 24px 16px;
     min-height:100vh;
     display:flex;
     justify-content:center;
-    align-items:center;
+    align-items:flex-start;
 }
 .container{
-    width:360px;
-    padding:24px;
+    width:100%;
+    max-width: 480px;
+    padding:28px 24px;
     background:#222;
-    border-radius:12px;
+    border-radius:14px;
 }
 h3{
     text-align:center;
-    margin-bottom:20px;
+    margin-bottom:24px;
     color:#00c896;
-    font-size:20px;
+    font-size:22px;
 }
 .input-wrap{
     display:flex;
-    gap:8px;
-    margin:8px 0;
+    gap:10px;
+    margin:10px 0;
 }
 .input-wrap input{
     flex:1;
-    padding:9px;
-    border-radius:6px;
+    padding:14px 12px;
+    border-radius:8px;
     border:none;
     background:#333;
     color:#fff;
-    font-size:14px;
+    font-size:17px;
 }
 .clear-btn{
-    width:42px;
+    width:48px;
     padding:0;
     background:#444;
     border:none;
     color:#ff6b6b;
-    border-radius:6px;
+    border-radius:8px;
     cursor:pointer;
     font-weight:bold;
+    font-size:18px;
 }
-.clear-btn:hover{
+.clear-btn:active{
     background:#555;
 }
 #genBtn{
     width:100%;
-    padding:11px;
-    margin-top:12px;
+    padding:16px;
+    margin-top:16px;
     background:#00c896;
     border:none;
     color:#000;
     font-weight:bold;
-    border-radius:6px;
+    border-radius:8px;
     cursor:pointer;
-    font-size:15px;
+    font-size:17px;
 }
-#genBtn:hover{
+#genBtn:active{
     background:#00e0a8;
 }
 .result{
-    margin-top:14px;
+    margin-top:18px;
     word-break:break-all;
     background:#000;
-    padding:10px;
-    border-radius:6px;
-    line-height:1.6;
+    padding:14px 12px;
+    border-radius:8px;
+    line-height:1.7;
+    font-size:16px;
 }
 .result a{
     color:#00c896;
     text-decoration: none;
 }
-.result a:hover{
+.result a:active{
     text-decoration: underline;
 }
 </style>
@@ -117,14 +121,29 @@ h3{
 </div>
 
 <script>
-// 頁面載入讀取所有輸入紀錄 + 上次連結
+// 頁面載入優先讀取本地儲存，無紀錄才載入預設值
 window.onload = function(){
-    // 回填各欄上次輸入
     const fields = ['user','repo','folder','file'];
+    // 預設初始值：前三欄預填範例，第四欄空白
+    const defaultVals = {
+        user: 'fam3000',
+        repo: 'op',
+        folder: 'right',
+        file: ''
+    };
+
     fields.forEach(key=>{
-        const val = localStorage.getItem(`input_${key}`);
-        if(val) document.getElementById(key).value = val;
+        const saved = localStorage.getItem(`input_${key}`);
+        const el = document.getElementById(key);
+        if(saved !== null){
+            // 有上次儲存紀錄就優先使用
+            el.value = saved;
+        }else{
+            // 無紀錄使用預設值
+            el.value = defaultVals[key];
+        }
     })
+
     // 回填上次產生的連結
     const lastUrl = localStorage.getItem('lastGhUrl');
     if(lastUrl){
@@ -151,14 +170,15 @@ function gen(){
         return;
     }
 
-    // 儲存每一格輸入內容到localStorage
+    // 儲存本次所有輸入到localStorage，下次開啟自動載入最後一次內容
     localStorage.setItem('input_user', user);
     localStorage.setItem('input_repo', repo);
     localStorage.setItem('input_folder', folder);
     localStorage.setItem('input_file', file);
 
-    // 組合網址
-    let url = `https://${user}.github.io/${repo}/${folder}/${file}`;
+    // 組合網址，空資料夾不會多出斜線
+    let path = folder ? `${folder}/` : '';
+    let url = `https://${user}.github.io/${repo}/${path}${file}`;
     document.getElementById("out").innerHTML = `<a href="${url}" target="_blank">${url}</a>`;
     localStorage.setItem('lastGhUrl', url);
 }
