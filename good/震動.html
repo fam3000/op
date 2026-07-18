@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>震動測試</title>
+</head>
+<body>
+    <!-- 寫法 1：直接在按鈕上綁定點擊事件 -->
+    <button onclick="navigator.vibrate(200);">點擊震動 200 毫秒</button>
+    
+    <!-- 寫法 2：帶有節奏的震動 (震 100ms -> 停 50ms -> 震 100ms) -->
+    <button onclick="navigator.vibrate([100, 50, 100]);">節奏震動</button>
+
+    <script>
+        // 如果你想用 JavaScript 額外綁定監聽器也可以：
+        document.querySelector('button').addEventListener('click', function() {
+            navigator.vibrate(300);
+        });
+    </script>
+</body>
+</html>
