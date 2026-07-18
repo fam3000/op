@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#495057" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Web工具" />
+<meta name="apple-mobile-web-app-title" content="Web工具計算機" />
 <meta name="mobile-web-app-capable" content="yes" />
 <link rel="icon" type="image/png" sizes="192x192" href="app-icon.png" />
 <link rel="apple-touch-icon" href="app-icon.png" />
@@ -49,9 +49,10 @@ html,body{height:100%;background:var(--bg-main);color:var(--text-main);overflow:
     transition:stroke 0.2s, opacity 0.2s;
 }
 
+/* 僅修改此行：top padding加入安全區高度，避開頂部狀態列重疊 */
 .history-wrap{
     flex:1;
-    padding:10px 16px 4px;
+    padding:calc(env(safe-area-inset-top, 20px) + 16px) 16px 4px;
     overflow-y:auto;
     text-align:right;
     background:var(--bg-panel);
