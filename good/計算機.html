@@ -141,6 +141,7 @@ body{
 
 .input-display::-webkit-scrollbar{display:none;}
 
+/* 關鍵修正：直接把底部 safe area 吃進 keypad，讓一開始就填滿 */
 .keypad{
     display:grid;
     grid-template-columns:1fr 1fr 1fr 1fr;
@@ -148,6 +149,8 @@ body{
     gap:1px;
     background:var(--grid-line);
     flex-shrink:0;
+    padding-bottom:constant(safe-area-inset-bottom);
+    padding-bottom:env(safe-area-inset-bottom);
 }
 
 .key{
@@ -1045,7 +1048,6 @@ document.querySelectorAll(".popup-item").forEach(item=>{
             }
             currentClickRow = null;
         }
-
         closePop();
     };
 });
@@ -1053,9 +1055,7 @@ document.querySelectorAll(".popup-item").forEach(item=>{
 document.querySelectorAll(".note-tool-btn").forEach(btn=>{
     btn.onclick = async function(){
         const tool = this.dataset.tool;
-
         if(tool === "time") noteInput.value += getFullTime();
-
         if(tool === "clip"){
             try{
                 const clipText = await navigator.clipboard.readText();
@@ -1064,17 +1064,14 @@ document.querySelectorAll(".note-tool-btn").forEach(btn=>{
                 alert("無法讀取剪貼簿，請手動貼上");
             }
         }
-
         if(tool === "left"){
             noteAlign = "left";
             noteInput.style.textAlign = "left";
         }
-
         if(tool === "right"){
             noteAlign = "right";
             noteInput.style.textAlign = "right";
         }
-
         noteInput.focus();
     };
 });
@@ -1085,19 +1082,16 @@ document.querySelector(".note-done").onclick = ()=>{
         alert("請輸入註解內容");
         return;
     }
-
     const noteObj = {
         type:"note",
         text:noteText,
         align:noteAlign
     };
-
     if(currentClickRow !== null){
         historyList.splice(currentClickRow + 1, 0, noteObj);
     }else{
         historyList.push(noteObj);
     }
-
     saveHistory();
     renderHistory();
     notePage.style.display = "none";
@@ -1146,19 +1140,16 @@ document.querySelectorAll(".key").forEach(key=>{
 
         if(val === "="){
             if(!exp) return;
-
             let tempExp = exp;
             while(opKeys.some(k=>tempExp.endsWith(opMap[k]))){
                 tempExp = tempExp.slice(0,-1);
             }
-
             if(!tempExp){
                 setDisplay("0");
                 exp = "";
                 isCalcDone = false;
                 return;
             }
-
             try{
                 let calcExp = tempExp.replace(/×/g,"*").replace(/÷/g,"/");
                 let res = Function('"use strict";return (' + calcExp + ')')();
@@ -1281,18 +1272,15 @@ document.getElementById("switchVib").onclick = (e)=>{
 document.querySelectorAll(".setting-row[data-page]").forEach(row=>{
     row.onclick = function(){
         const pageType = this.dataset.page;
-
         if(pageType === "theme"){
             renderThemeSelection();
             themePage.style.display = "block";
             return;
         }
-
         if(pageType === "sound"){
             alert("音效設定頁可再另外補上");
             return;
         }
-
         if(pageType === "trash"){
             renderTrashList();
             trashPage.style.display = "block";
