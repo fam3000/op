@@ -141,10 +141,11 @@ body{
 
 .input-display::-webkit-scrollbar{display:none;}
 
+/* 重點修改：底部擴充安全區高度，填滿iPhone底部橫條空白 */
 .keypad{
     display:grid;
     grid-template-columns:1fr 1fr 1fr 1fr;
-    grid-template-rows:88px 88px 88px 88px 88px;
+    grid-template-rows:88px 88px 88px 88px calc(88px + env(safe-area-inset-bottom, 0px));
     gap:1px;
     background:var(--grid-line);
     flex-shrink:0;
