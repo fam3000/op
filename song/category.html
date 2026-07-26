@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>分類 · 歌詞簿</title>
+  <link rel="stylesheet" href="./app.css" />
+</head>
+<body>
+  <div class="app-container">
+    <div class="view active" id="viewCategory">
+      <nav class="nav-bar">
+        <button class="nav-back" id="backBtn" aria-label="返回">←</button>
+        <span class="nav-title" id="categoryTitle">分類</span>
+      </nav>
+
+      <section class="tag-filter">
+        <div class="tag-scroll" id="tagScroll"></div>
+      </section>
+
+      <main class="list-scroll">
+        <div id="songListContainer"></div>
+      </main>
+
+      <footer class="bottom-nav">
+        <button class="nav-item active" data-tab="catalog">
+          <span class="nav-label">目錄</span>
+        </button>
+        <button class="nav-item" data-tab="bookmark">
+          <span class="nav-label">書籤</span>
+        </button>
+        <button class="nav-item" data-tab="lyrics">
+          <span class="nav-label">自定歌詞</span>
+        </button>
+        <button class="nav-item" data-tab="settings">
+          <span class="nav-label">設定</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
