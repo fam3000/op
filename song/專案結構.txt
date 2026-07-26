@@ -1,0 +1,9 @@
+lyrics-book/
+├─ index.html
+├─ bookmark.html
+├─ lyrics.html
+├─ settings.html
+├─ app.css
+├─ app.js
+└─ data/
+   └─ songs.json
