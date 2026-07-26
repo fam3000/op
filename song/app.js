@@ -196,4 +196,8 @@
       .replaceAll('"', '&quot;')
       .replaceAll("'", '&#39;');
   }
+  songs.forEach((song, index) => {
+  const number = index + 1;
+});
+
 })();
