@@ -1,0 +1,8 @@
+[
+  { "category": "zh", "number": "1600", "title": "歌曲名稱", "sub": "中文" },
+  { "category": "en", "number": "1601", "title": "Song Title", "sub": "English" },
+  { "category": "cantonese", "number": "1602", "title": "粵語歌名", "sub": "粵語" },
+  { "category": "kr", "number": "1603", "title": "한국어 제목", "sub": "韓語" },
+  { "category": "bgm", "number": "1604", "title": "BGM Track", "sub": "BGM" },
+  { "category": "kids", "number": "1605", "title": "兒歌名稱", "sub": "兒歌" }
+]
