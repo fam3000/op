@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>歌手歌名 → AI歌詞JSON提示產生器</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif;}
+html,body{background:#141820;color:#eef2f7;padding:12px;min-height:100vh;}
+.title{font-size:18px;margin-bottom:10px;color:#72b8ff;font-weight:bold;}
+.desc{font-size:13px;color:#a5b4c7;margin-bottom:8px;line-height:1.5;}
+textarea{width:100%;min-height:140px;background:#0f131a;border:1px solid #2d3748;border-radius:6px;color:#fff;padding:10px;font-size:15px;white-space:pre-wrap;outline:none;}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
+button{padding:9px 14px;border:0;border-radius:6px;background:#2b6cb0;color:#fff;font-size:15px;cursor:pointer;}
+button:active{opacity:0.85;}
+.label{margin-top:14px;font-size:16px;color:#94b8e8;display:block;}
+#promptOut{min-height:200px;}
+</style>
+</head>
+<body>
+<div class="title">輸入清單 (格式：歌手-歌名，一行一首)</div>
+<div class="desc">範例：逃跑計劃-夜空中最亮的星<br>每一行「歌手-歌曲名稱」，分隔符是減號 -</div>
+<textarea id="inputList" placeholder="逃跑計劃-夜空中最亮的星
+田馥甄-小幸運"></textarea>
+
+<div class="btns">
+<button onclick="buildPrompt()">產生AI專用提示詞</button>
+<button onclick="copyPrompt()">複製提示詞</button>
+<button onclick="clearAll()">清空</button>
+</div>
+
+<span class="label">👉 複製下方全部內容貼給AI：</span>
+<textarea id="promptOut" readonly></textarea>
+
+<script>
+const basePrompt = `請嚴格遵守規則，只輸出標準JSON陣列，不要任何解釋、標題、備註、前言。
+範例輸出格式：
+[
+  {
+    "category": "zh",
+    "title": "小幸運",
+    "sub": "田馥甄",
+    "subcategory": "抒情",
+    "lyrics": "完整歌詞內容\\n段落換行使用\\n"
+  }
+]
+
+規則：
+1. 資料來源：下方清單「歌手-歌名」
+2. category自動判斷：
+中文歌曲=zh｜粵語=cantonese｜英文=en｜韓語=kr｜純音樂bgm｜兒歌kids
+3. sub=歌手，title=歌曲名稱
+4. 自動判斷曲風填入subcategory：抒情 / 流行 / 搖滾 / Pop / Classic / Rock / Dance / 鋼琴 / 童謠擇一
+5. lyrics填入整首完整原版歌詞，段落換行使用\\n；純音樂固定填"(純音樂，無歌詞)"
+6. 全部符號使用英文半形雙引號；物件之間英文逗號分隔，最後一筆不要多餘逗號
+
+待處理歌曲清單：
+`;
+
+function buildPrompt(){
+  const list = document.getElementById("inputList").value.trim();
+  const fullText = basePrompt + "\n" + list;
+  document.getElementById("promptOut").value = fullText;
+}
+
+function copyPrompt(){
+  const text = document.getElementById("promptOut").value;
+  navigator.clipboard.writeText(text).then(()=>alert("✅ 提示詞已複製！直接貼給AI"));
+}
+
+function clearAll(){
+  document.getElementById("inputList").value = "";
+  document.getElementById("promptOut").value = "";
+}
+</script>
+</body>
+</html>
