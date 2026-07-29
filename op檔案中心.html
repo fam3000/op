@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>GitHub 檔案中心</title>
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --sat: max(env(safe-area-inset-top, 0px), 24px);
+  --sab: max(env(safe-area-inset-bottom, 0px), 0px);
+  --bg: #0d0d14;
+  --bg-card: #161625;
+  --bg-card-hover: #1e1e32;
+  --accent: #f97316;
+  --accent-light: #fb923c;
+  --accent-dim: rgba(249, 115, 22, 0.12);
+  --text: #e8e8f0;
+  --text-sec: #8888a8;
+  --border: #2a2a40;
+  --radius: 14px;
+  --radius-sm: 10px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+input, button {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  outline: none;
+  background: none;
+  color: inherit;
+}
+button { cursor: pointer; }
+
+::-webkit-scrollbar { width: 0; height: 0; }
+
+/* ===== 背景裝飾 ===== */
+.bg-glow {
+  position: fixed;
+  top: -100px;
+  right: -100px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.06), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.bg-glow2 {
+  position: fixed;
+  bottom: -80px;
+  left: -80px;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.04), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ===== 頂部導航 ===== */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding-top: var(--sat);
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-bottom: 16px;
+  background: linear-gradient(180deg, var(--bg) 70%, transparent);
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.navbar-title {
+  flex: 1;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  color: var(--text);
+}
+.navbar-title i {
+  color: var(--accent);
+  margin-right: 8px;
+}
+.navbar-actions {
+  display: flex;
+  gap: 6px;
+}
+.navbar-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--text-sec);
+  font-size: 16px;
+  transition: all .2s;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+.navbar-btn:active {
+  background: var(--accent-dim);
+  color: var(--accent);
+  transform: scale(0.94);
+}
+
+/* ===== 搜索欄 ===== */
+.search-wrap {
+  padding: 0 16px 12px;
+  position: relative;
+}
+.search-wrap i {
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-sec);
+  font-size: 14px;
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  height: 44px;
+  border-radius: 22px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 0 16px 0 42px;
+  color: var(--text);
+  font-size: 14px;
+  transition: border-color .2s;
+}
+.search-input:focus {
+  border-color: var(--accent);
+}
+.search-input::placeholder {
+  color: var(--text-sec);
+}
+
+/* ===== 控制按鈕列 ===== */
+.controls {
+  padding: 0 16px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.controls button {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-sec);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.controls button:active {
+  transform: scale(0.95);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.controls button i {
+  margin-right: 4px;
+}
+
+/* ===== 資訊條 ===== */
+#info {
+  padding: 0 16px 14px;
+  color: var(--text-sec);
+  font-size: 13px;
+  font-weight: 400;
+}
+#info span {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== 卡片網格 ===== */
+#list {
+  padding: 0 16px 120px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 14px 14px;
+  transition: all .25s;
+  cursor: pointer;
+  position: relative;
+  animation: fadeIn .3s ease both;
+}
+.card:active {
+  transform: scale(0.97);
+}
+.card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-dim);
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  padding-right: 32px;
+  word-break: break-all;
+  color: var(--text);
+}
+.path {
+  font-size: 12px;
+  color: var(--text-sec);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.size {
+  font-size: 11px;
+  color: var(--text-sec);
+  margin-top: 6px;
+  opacity: 0.7;
+}
+
+/* ===== 收藏星 ===== */
+.favorite {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text-sec);
+  transition: all .2s;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.2);
+}
+.favorite:active {
+  transform: scale(0.85);
+}
+.favorite.active {
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.15);
+}
+
+/* ===== 加載 / 空狀態 ===== */
+.loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-sec);
+  font-size: 14px;
+}
+.loading i {
+  font-size: 36px;
+  display: block;
+  margin-bottom: 12px;
+  opacity: 0.4;
+}
+
+/* ===== Markdown 彈窗 ===== */
+.markdown {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  overflow: auto;
+  padding: 20px;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+.markdown.show {
+  display: flex;
+}
+.markdownBox {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  max-width: 900px;
+  width: 100%;
+  margin: auto;
+  padding: 24px;
+  line-height: 1.8;
+  color: var(--text);
+  position: relative;
+  animation: fadeIn .3s ease;
+}
+.markdownBox h1, .markdownBox h2 {
+  color: var(--accent);
+}
+.markdownBox h1 { font-size: 22px; margin-bottom: 8px; }
+.markdownBox h2 { font-size: 18px; margin-top: 16px; margin-bottom: 6px; }
+.markdownBox hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 12px 0;
+}
+.markdownBox code {
+  background: rgba(249,115,22,0.12);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--accent-light);
+}
+.close {
+  float: right;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text-sec);
+  padding: 4px 10px;
+  border-radius: 20px;
+  transition: all .2s;
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+.close:active {
+  transform: scale(0.92);
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+img.preview {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  margin-top: 12px;
+}
+audio {
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
+  background: var(--bg);
+}
+
+/* ===== 動畫 ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== 響應式 ===== */
+@media (max-width: 700px) {
+  #list {
+    grid-template-columns: 1fr;
+    padding: 0 12px 120px;
+  }
+  .navbar-title {
+    font-size: 17px;
+  }
+  .controls button {
+    font-size: 12px;
+    padding: 5px 12px;
+  }
+  .markdownBox {
+    padding: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="bg-glow2"></div>
+
+<!-- 頂部導航 -->
+<div class="navbar">
+  <div class="navbar-title">
+    <i class="fas fa-folder-open"></i> GitHub 檔案中心
+  </div>
+  <div class="navbar-actions">
+    <button class="navbar-btn" onclick="location.reload()" aria-label="重新整理">
+      <i class="fas fa-sync-alt"></i>
+    </button>
+  </div>
+</div>
+
+<!-- 搜索 -->
+<div class="search-wrap">
+  <i class="fas fa-search"></i>
+  <input class="search-input" id="search" placeholder="搜尋檔案名稱或路徑...">
+</div>
+
+<!-- 控制按鈕 -->
+<div class="controls">
+  <button onclick="render(files)"><i class="fas fa-list"></i> 全部</button>
+  <button onclick="showFavorites()"><i class="fas fa-star"></i> 收藏</button>
+  <button onclick="showRecent()"><i class="fas fa-clock"></i> 最近</button>
+  <button onclick="sortFiles('name')"><i class="fas fa-sort-alpha-down"></i> 名稱</button>
+  <button onclick="sortFiles('size')"><i class="fas fa-weight-hanging"></i> 大小</button>
+  <button onclick="sortFiles('type')"><i class="fas fa-tag"></i> 類型</button>
+</div>
+
+<!-- 資訊 -->
+<div id="info">讀取中...</div>
+
+<!-- 卡片清單 -->
+<div id="list">
+  <div class="loading"><i class="fas fa-spinner fa-pulse"></i> 讀取中...</div>
+</div>
+
+<!-- Markdown / 預覽彈窗 -->
+<div id="markdown" class="markdown">
+  <div class="markdownBox">
+    <div class="close" onclick="closeMarkdown()"><i class="fas fa-times"></i> 關閉</div>
+    <div id="markdownContent"></div>
+  </div>
+</div>
+
+<script>
+const USER = "fam3000";
+const REPO = "op";
+const BASE = `https://${USER}.github.io/${REPO}/`;
+
+let files = [];
+let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+let recent = JSON.parse(localStorage.getItem("recent") || "[]");
+
+// ===== 載入 GitHub 檔案 =====
+async function loadFiles() {
+  try {
+    const res = await fetch(`https://api.github.com/repos/${USER}/${REPO}/git/trees/main?recursive=1`);
+    if (!res.ok) throw new Error("API 請求失敗");
+    const data = await res.json();
+    files = data.tree.filter(item => item.type !== 'tree').map(item => ({
+      name: item.path.split('/').pop(),
+      path: item.path,
+      size: item.size,
+      download_url: `https://raw.githubusercontent.com/${USER}/${REPO}/main/${item.path}`
+    }));
+    render(files);
+    updateInfo();
+  } catch (err) {
+    document.getElementById("list").innerHTML = `<div class="loading"><i class="fas fa-exclamation-triangle"></i> 讀取失敗：${err.message}</div>`;
+  }
+}
+
+// ===== 圖示 =====
+function getTypeIcon(filename) {
+  const ext = filename.split('.').pop().toLowerCase();
+  const map = {
+    html: '🌐', md: '📝', mp3: '🎵', png: '🖼️', jpg: '🖼️', jpeg: '🖼️',
+    pdf: '📕', zip: '📦', rar: '📦', js: '💻', css: '🎨', json: '📋',
+    txt: '📄', xml: '📄', svg: '🎨', gif: '🖼️', wav: '🎵', flac: '🎵'
+  };
+  return map[ext] || '📄';
+}
+
+// ===== 渲染卡片 =====
+function render(arr) {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  if (!arr || arr.length === 0) {
+    list.innerHTML = `<div class="loading"><i class="fas fa-search"></i> 沒有找到檔案</div>`;
+    return;
+  }
+
+  arr.forEach((file, index) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.animationDelay = Math.min(index * 0.02, 0.4) + "s";
+    card.onclick = (e) => {
+      if (!e.target.closest(".favorite")) openFile(file.path);
+    };
+
+    const isFav = favorites.includes(file.path);
+    card.innerHTML = `
+      <span class="favorite ${isFav ? 'active' : ''}" onclick="toggleFavorite(event,'${file.path}')">
+        <i class="${isFav ? 'fas' : 'far'} fa-star"></i>
+      </span>
+      <div class="title">${getTypeIcon(file.name)} ${file.name}</div>
+      <div class="path">${file.path}</div>
+      <div class="size">${file.size ?? 0} bytes</div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+// ===== 開啟檔案 =====
+async function openFile(path) {
+  const file = files.find(f => f.path === path);
+  if (!file) return;
+
+  // 記錄最近
+  recent = recent.filter(p => p !== path);
+  recent.unshift(path);
+  localStorage.setItem("recent", JSON.stringify(recent.slice(0, 20)));
+
+  const ext = path.split('.').pop().toLowerCase();
+  if (ext === "md") {
+    await showMarkdown(file);
+  } else if (["png", "jpg", "jpeg", "gif", "svg"].includes(ext)) {
+    showImage(file);
+  } else if (["mp3", "wav", "flac"].includes(ext)) {
+    showAudio(file);
+  } else {
+    window.open(BASE + path, "_blank");
+  }
+}
+
+// ===== 圖片預覽 =====
+function showImage(file) {
+  document.getElementById("markdownContent").innerHTML = `
+    <h2>🖼️ ${file.name}</h2>
+    <hr>
+    <img class="preview" src="${file.download_url}" alt="${file.name}">
+  `;
+  document.getElementById("markdown").classList.add("show");
+}
+
+// ===== 音頻播放 =====
+function showAudio(file) {
+  document.getElementById("markdownContent").innerHTML = `
+    <h2>🎵 ${file.name}</h2>
+    <hr>
+    <audio controls src="${file.download_url}"></audio>
+  `;
+  document.getElementById("markdown").classList.add("show");
+}
+
+// ===== Markdown 解析 =====
+function markdownParser(text) {
+  return text
+    .replace(/^# (.*$)/gim, "<h1>$1</h1>")
+    .replace(/^## (.*$)/gim, "<h2>$1</h2>")
+    .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+    .replace(/`(.*?)`/g, "<code>$1</code>")
+    .replace(/\n/g, "<br>");
+}
+
+async function showMarkdown(file) {
+  const res = await fetch(file.download_url);
+  const text = await res.text();
+  document.getElementById("markdownContent").innerHTML = `
+    <h2>📝 ${file.name}</h2>
+    <hr>
+    <div>${markdownParser(text)}</div>
+  `;
+  document.getElementById("markdown").classList.add("show");
+}
+
+function closeMarkdown() {
+  document.getElementById("markdown").classList.remove("show");
+}
+document.getElementById("markdown").onclick = (e) => {
+  if (e.target.id === "markdown") closeMarkdown();
+};
+
+// ===== 搜尋 =====
+document.getElementById("search").oninput = function () {
+  const k = this.value.toLowerCase().trim();
+  if (!k) { render(files); return; }
+  const res = files.filter(f => f.name.toLowerCase().includes(k) || f.path.toLowerCase().includes(k));
+  render(res);
+};
+
+// ===== 收藏 =====
+function toggleFavorite(event, path) {
+  event.stopPropagation();
+  if (favorites.includes(path)) {
+    favorites = favorites.filter(x => x !== path);
+  } else {
+    favorites.push(path);
+  }
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+  render(files);
+}
+
+function showFavorites() {
+  render(files.filter(f => favorites.includes(f.path)));
+}
+
+function showRecent() {
+  const result = [];
+  recent.forEach(p => {
+    const item = files.find(f => f.path === p);
+    if (item) result.push(item);
+  });
+  render(result);
+}
+
+// ===== 排序 =====
+function sortFiles(type) {
+  const list = [...files];
+  if (type === "name") list.sort((a, b) => a.name.localeCompare(b.name));
+  if (type === "size") list.sort((a, b) => (b.size || 0) - (a.size || 0));
+  if (type === "type") {
+    const ext = f => f.name.split('.').pop().toLowerCase();
+    list.sort((a, b) => ext(a).localeCompare(ext(b)));
+  }
+  render(list);
+}
+
+// ===== 更新資訊 =====
+function updateInfo() {
+  document.getElementById("info").innerHTML = `
+    全部檔案：<span>${files.length}</span> &nbsp;&nbsp; 收藏：<span>${favorites.length}</span>
+  `;
+}
+
+// ===== 啟動 =====
+loadFiles();
+</script>
+</body>
+</html>
