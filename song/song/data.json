@@ -1,3 +1,23 @@
+{
+  "songs": [
+    {
+      "category": "zh",
+      "title": "歌曲名稱",
+      "sub": "歌手",
+      "subcategory": "分類",
+      "lyrics": "完整歌詞內容\n第二行\n第三行"
+    },
+    {
+      "category": "en",
+      "title": "Song Title",
+      "sub": "Artist",
+      "subcategory": "Pop",
+      "lyrics": "Lyrics line 1\nLyrics line 2"
+    }
+  ]
+}
+
+
 [
 {
 "category": "zh",
